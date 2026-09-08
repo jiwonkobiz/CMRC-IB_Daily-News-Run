@@ -358,96 +358,29 @@ def fetch_kr_rates():
 
 
 # ---------------------------------------------------------------------------
-# 환율 (ECOS 매매기준율 우선, 실패 시 Yahoo 폴백)
+# 환율 (Yahoo Finance)
 # ---------------------------------------------------------------------------
+#
+# ECOS 매매기준율(서울외국환중개 원출처)을 한 번 붙여 봤으나 되돌렸다.
+# 매매기준율 D일자 고시는 D-1 거래를 반영하므로, 그대로 D일 행에 넣으면
+# 환율만 하루 밀린다. 야후 종가와 날짜별로 대조했을 때 같은 날 기준으로는
+# 평균 8원 이상 벌어지고 ECOS 를 하루 당기면 2원 안으로 붙었다.
+# 다른 6개 표가 모두 "그날 시장 종가"이므로, 한 행 안의 날짜 일관성을
+# 우선해 야후 종가로 통일한다.
 
-ECOS_FX_STATS = ["731Y001", "731Y002"]
-
-# 컬럼 -> (ECOS 항목 후보, 야후 폴백 티커, 타당 범위)
-FX_SPEC = {
-    "달러/원":   (["원/미국달러(매매기준율)", "원/미국달러"], "KRW=X",    (500, 3000)),
-    "유로/원":   (["원/유로", "원/유로화"],                    "EURKRW=X", (500, 4000)),
-    "엔/원":     (["원/일본엔(100엔)", "원/일본엔"],           "JPYKRW=X", (3, 30)),
-    "유로/달러": (["미국달러/유로", "달러/유로"],              "EURUSD=X", (0.5, 2.0)),
-    "달러/엔":   (["일본엔/미국달러", "엔/달러"],              "JPY=X",    (50, 300)),
+FX_TICKERS = {
+    "달러/원": "KRW=X",
+    "유로/원": "EURKRW=X",
+    "엔/원": "JPYKRW=X",      # 1엔 기준 (원본 파일이 9.38 형태로 기록 중)
+    "유로/달러": "EURUSD=X",
+    "달러/엔": "JPY=X",
 }
 
 
 def fetch_fx():
-    today = datetime.now(KST).date()
-    start = (today - timedelta(days=FETCH_CALENDAR_DAYS)).strftime("%Y%m%d")
-    end = today.strftime("%Y%m%d")
-
-    catalog: dict[str, tuple[str, str]] = {}
-    try:
-        api_key = _ecos_key()
-        for stat in ECOS_FX_STATS:
-            try:
-                for name, code in _ecos_items(api_key, stat).items():
-                    catalog.setdefault(name, (stat, code))
-            except Exception as exc:
-                log(f"  ! ECOS {stat} 항목목록 실패: {exc}")
-        log(f"  ECOS 환율 후보 항목 {len(catalog)}개")
-        for name in sorted(catalog):
-            log(f"    · {name}")
-    except Exception as exc:
-        log(f"  ! ECOS 환율 카탈로그 구성 실패: {exc}")
-        api_key = None
-
-    out: dict[str, dict[date, float]] = {}
-    fallback_cols: dict[str, str] = {}
-
-    for col, (candidates, ticker, (lo, hi)) in FX_SPEC.items():
-        if not api_key or not catalog:
-            fallback_cols[col] = ticker
-            continue
-
-        matched, ref = _match(catalog, candidates)
-        if ref is None:
-            log(f"  ~ {col}: ECOS 항목 없음 -> 야후 폴백")
-            fallback_cols[col] = ticker
-            continue
-
-        stat, code = ref
-        try:
-            pts = _ecos_daily(api_key, stat, code, start, end)
-        except Exception as exc:
-            log(f"  ~ {col}: ECOS 조회 실패({exc}) -> 야후 폴백")
-            fallback_cols[col] = ticker
-            continue
-
-        if not pts:
-            log(f"  ~ {col}: ECOS 결과 비어 있음 -> 야후 폴백")
-            fallback_cols[col] = ticker
-            continue
-
-        # 100엔 표기면 1엔 기준으로 환산
-        scale = 0.01 if "100" in matched else 1.0
-        pts = {d: v * scale for d, v in pts.items()}
-
-        latest = pts[max(pts)]
-        if not (lo <= latest <= hi):
-            log(f"  ~ {col}: ECOS 값 {latest} 이 타당 범위 밖 -> 야후 폴백")
-            errors.append(f"환율/{col}: ECOS 값 범위 이상({latest}) - 야후로 대체")
-            fallback_cols[col] = ticker
-            continue
-
-        log(f"  {col} <- ECOS {stat} '{matched}' ({code}){' /100' if scale != 1 else ''}")
-        notes[f"환율/{col}"] = f"ECOS {stat} {matched}"
-        out[col] = pts
-
-    if fallback_cols:
-        log(f"  야후 폴백: {list(fallback_cols)}")
-        try:
-            yah = yahoo_series("환율", fallback_cols)
-            for col, pts in yah.items():
-                out[col] = pts
-                notes[f"환율/{col}"] = f"Yahoo Finance {fallback_cols[col]}"
-        except Exception as exc:
-            for col in fallback_cols:
-                out.setdefault(col, {})
-                errors.append(f"환율/{col}: ECOS·야후 모두 실패 ({exc})")
-
+    out = yahoo_series("환율", FX_TICKERS)
+    for col, ticker in FX_TICKERS.items():
+        notes[f"환율/{col}"] = f"Yahoo Finance {ticker}"
     return out
 
 
