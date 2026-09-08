@@ -1,0 +1,61 @@
+name: daily-market-close
+
+on:
+  schedule:
+    # 한국시간 평일 08:00 = UTC 전날 23:00.
+    # UTC 일~목(0-4) 23:00 -> KST 월~금 08:00.
+    # GitHub 스케줄러는 부하 시 수 분 지연될 수 있으니, 하드 데드라인이 있으면
+    # 22:30 UTC(07:30 KST) 로 앞당길 것.
+    - cron: "0 23 * * 0-4"
+  workflow_dispatch:        # 수동 실행 버튼
+
+permissions:
+  contents: write           # data/latest.json 커밋용
+
+concurrency:
+  group: daily-market-close
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch market data
+        env:
+          ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
+          TZ: Asia/Seoul
+        run: python fetch_market_data.py
+
+      - name: Commit result
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/latest.json
+          if git diff --staged --quiet; then
+            echo "변경 없음 - 커밋 생략"
+          else
+            git commit -m "data: $(TZ=Asia/Seoul date +'%Y-%m-%d') 종가 갱신"
+            git push
+          fi
+
+      - name: Upload result artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latest-json
+          path: data/latest.json
+          if-no-files-found: warn
