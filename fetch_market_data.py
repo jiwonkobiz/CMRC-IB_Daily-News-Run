@@ -49,7 +49,7 @@ OUT_PATH = Path(__file__).parent / "data" / "latest.json"
 
 BACKFILL_BUSINESS_DAYS = 10   # 게시할 평일 개수 (연휴 대비 2주치)
 FETCH_CALENDAR_DAYS = 40      # 소스에서 끌어올 달력일 범위
-CUTOFF = time(9, 0)           # D일 종가를 인정하는 D+1 시각 (KST)
+CUTOFF = time(8, 0)           # D일 종가를 인정하는 D+1 시각 (KST)
 
 # 표별 컬럼 순서와 소수점 자릿수. 엑셀 표 헤더와 문자열이 정확히 일치해야 한다.
 TABLE_SPEC: dict[str, list[tuple[str, int]]] = {
