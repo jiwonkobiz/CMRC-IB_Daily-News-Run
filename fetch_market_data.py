@@ -6,10 +6,10 @@ CMRC IB Daily News Run - 전일 종가 수집기
 
 목표일 결정 (미국장 마감 기준)
   미국 정규장 D일 종가는 한국시간 D+1 새벽 5시에 확정된다. 따라서 D일을 목표일로
-  인정하는 조건은 "현재 시각 >= D+1 09:00 KST" 다. 조건을 못 채우면 한 평일 더
-  거슬러 올라간다. 이렇게 하면 새벽에 수동 실행해도 미국 장중 시세가 섞이지 않고,
-  한 행에는 항상 같은 날짜의 확정 종가만 들어간다. 목표일보다 최신인 데이터는
-  수집 직후 전부 버린다.
+  인정하는 조건은 "현재 시각 >= D+1 08:00 KST"(CUTOFF) 다. 조건을 못 채우면 한
+  평일 더 거슬러 올라간다. 이렇게 하면 새벽에 수동 실행해도 미국 장중 시세가
+  섞이지 않고, 한 행에는 항상 같은 날짜의 확정 종가만 들어간다. 목표일보다
+  최신인 데이터는 수집 직후 전부 버린다.
 
 행 구성
   - 단일 시장 표(미국증시/국내증시/미국채/국내채권)는 기준 컬럼 하나로 개장
@@ -18,10 +18,21 @@ CMRC IB Daily News Run - 전일 종가 수집기
   - 복수 시장 표(해외주요국증시/환율/원자재)는 컬럼별로 판정한다. 영국만 쉬고
     나머지는 여는 날을 제대로 처리하려면 이쪽이 맞다.
   - 휴장이면 직전 거래일 값을 이어 적고 carried_forward=true 로 표시한다.
+    어느 컬럼이 이월됐는지는 carried_columns 에 담는다. 표 단위 bool 만으로는
+    "영국만 쉼"과 "표 전체 미수신"이 구분되지 않기 때문이다.
     원본 파일이 5/25 메모리얼데이 행을 5/22 값으로 채워 둔 관행과 같다.
   - 행 날짜는 모든 표가 한국 평일(월~금) 기준이며, 매 실행마다 최근 평일
     BACKFILL_BUSINESS_DAYS 개분을 통째로 게시한다. 시트에 이미 있는 날짜를
     거르는 일은 Office Script 쪽에서 한다.
+
+목표일 미수신 감지
+  소스가 응답은 했는데 목표일 바(bar)만 없는 경우, 예전에는 아무 경고 없이
+  직전 영업일 값이 조용히 이월됐다. 휴장과 구분이 안 되므로 지금은 컬럼별로
+  최신 일자를 target 과 대조해 errors 에 기록한다. 진짜 휴장일에는 false
+  positive 가 나지만, 틀린 값이 조용히 시트에 들어가는 것보다 낫다.
+  목표일 이후 데이터가 폐기된 내역(dropped_after_target)도 컬럼별로 남긴다.
+  "목표일은 미수신인데 목표일+1 은 존재"하면 소스 인덱스가 하루 밀렸다는
+  뜻이므로, 이 조합이 잡히면 errors 메시지에 힌트가 붙는다.
 
 경제지표 5개 표(CPI/PPI/PCE/PMI/NFP)는 월간 발표라 수기 유지한다.
 
@@ -97,6 +108,11 @@ notes: dict[str, str] = {}   # 컬럼별 실제 사용 소스 기록
 # series[표][컬럼] = {date: raw float}
 series: dict[str, dict[str, dict[date, float]]] = {}
 
+# 진단용. dropped_after_target[표][컬럼] = ["2026-09-15", ...]
+dropped_after_target: dict[str, dict[str, list[str]]] = {}
+# staleness[표][컬럼] = 목표일 미수신 시 실제 최신 일자
+staleness: dict[str, dict[str, str]] = {}
+
 
 def log(msg: str) -> None:
     print(msg, flush=True)
@@ -120,7 +136,7 @@ def weekdays_back(end: date, count: int) -> list[date]:
 
 
 def resolve_target(now: datetime) -> date:
-    """미국장이 확실히 닫힌 마지막 평일. D일 인정 조건은 now >= D+1 09:00 KST."""
+    """미국장이 확실히 닫힌 마지막 평일. D일 인정 조건은 now >= D+1 CUTOFF KST."""
     d = prev_business_day(now.date())
     for _ in range(10):
         cutoff = datetime.combine(d + timedelta(days=1), CUTOFF, tzinfo=KST)
@@ -450,6 +466,32 @@ def _effective(points: dict[date, float], d: date):
     return None, False
 
 
+def check_freshness(table: str, raw: dict[str, dict[date, float]], target: date) -> None:
+    """목표일 바가 없는 컬럼을 errors 에 기록한다.
+
+    휴장이면 false positive 지만, 소스 미갱신/날짜 밀림이 조용히 이월되는 것보다
+    낫다. 목표일은 없는데 목표일 이후 데이터가 폐기됐다면 소스 인덱스가 하루
+    밀렸다는 강한 신호이므로 메시지에 힌트를 붙인다.
+    """
+    future = dropped_after_target.get(table, {})
+    for col, pts in series.get(table, {}).items():
+        if not pts:
+            continue          # 빈 컬럼은 이미 fetch 단계에서 errors 에 잡힌다
+        newest = max(pts)
+        if newest >= target:
+            continue
+        staleness.setdefault(table, {})[col] = newest.isoformat()
+        ahead = future.get(col) or []
+        hint = (
+            f" / 목표일 이후 {ahead[0]} 값은 존재 — 소스 날짜가 하루 밀렸을 가능성"
+            if ahead else ""
+        )
+        errors.append(
+            f"{table}/{col}: 목표일 {target.isoformat()} 미수신 "
+            f"(최신 {newest.isoformat()}, 직전값 이월됨){hint}"
+        )
+
+
 def build_rows(table: str, cal_dates: list[date]) -> list[dict]:
     digits = TABLE_DIGITS[table]
     data = series.get(table, {})
@@ -458,7 +500,7 @@ def build_rows(table: str, cal_dates: list[date]) -> list[dict]:
 
     for d in cal_dates:
         values: dict[str, float | None] = {}
-        carried = False
+        carried_cols: list[str] = []
 
         if anchor and data.get(anchor):
             # 기준 컬럼으로 유효일자를 정하고 행 전체를 그 날짜에서 읽는다.
@@ -466,17 +508,26 @@ def build_rows(table: str, cal_dates: list[date]) -> list[dict]:
             eff = d if d in anchor_pts else max(
                 (pd for pd in anchor_pts if pd < d), default=None
             )
-            carried = eff is not None and eff != d
+            row_carried = eff is not None and eff != d
             for col in TABLE_COLUMNS[table]:
                 v = data.get(col, {}).get(eff) if eff else None
                 values[col] = round(v, digits[col]) if v is not None else None
+            if row_carried:
+                # 앵커 표는 행 전체가 같은 날짜에서 오므로 값이 찬 컬럼 전부가 이월이다.
+                carried_cols = [c for c in TABLE_COLUMNS[table] if values[c] is not None]
         else:
             for col in TABLE_COLUMNS[table]:
                 v, c = _effective(data.get(col, {}), d)
                 values[col] = round(v, digits[col]) if v is not None else None
-                carried = carried or c
+                if c:
+                    carried_cols.append(col)
 
-        rows.append({"date": d.isoformat(), "values": values, "carried_forward": carried})
+        rows.append({
+            "date": d.isoformat(),
+            "values": values,
+            "carried_forward": bool(carried_cols),
+            "carried_columns": carried_cols,
+        })
 
     rows.reverse()  # 시트와 같은 최신순
     return rows
@@ -500,11 +551,25 @@ def main() -> int:
                 col: {d: v for d, v in pts.items() if d <= target}
                 for col, pts in raw.items()
             }
-            dropped = sum(len(p) for p in raw.values()) - sum(
-                len(p) for p in series[name].values()
+            # 폐기 내역을 컬럼별로 남긴다. 미수신 진단에 쓴다.
+            dropped_map = {
+                col: sorted(d.isoformat() for d in pts if d > target)
+                for col, pts in raw.items()
+            }
+            dropped_map = {c: v for c, v in dropped_map.items() if v}
+            if dropped_map:
+                dropped_after_target[name] = dropped_map
+
+            # 컬럼별 건수와 최신 일자를 같이 찍는다. 한 컬럼만 뒤처지면 여기서 보인다.
+            detail = ", ".join(
+                f"{c}={len(v)}건/{max(v).isoformat() if v else '없음'}"
+                for c, v in series[name].items()
             )
-            log(f"  OK {({c: len(v) for c, v in series[name].items()})}"
-                + (f"  (목표일 이후 {dropped}건 폐기)" if dropped else ""))
+            dropped_n = sum(len(v) for v in dropped_map.values())
+            log(f"  OK {detail}"
+                + (f"  (목표일 이후 {dropped_n}건 폐기)" if dropped_n else ""))
+
+            check_freshness(name, raw, target)
         except Exception as exc:
             errors.append(f"{name}: {type(exc).__name__}: {exc}")
             log(f"  FAIL {name}: {exc}")
@@ -517,7 +582,9 @@ def main() -> int:
         rows = build_rows(name, cal_dates)
         tables[name] = {"columns": TABLE_COLUMNS[name], "rows": rows}
         newest = rows[0]
-        flag = " (carry-forward)" if newest["carried_forward"] else ""
+        flag = ""
+        if newest["carried_forward"]:
+            flag = f" (carry-forward: {', '.join(newest['carried_columns'])})"
         log(f"  {name}: {len(rows)}행, 최신 {newest['date']}{flag}")
 
     payload = {
@@ -526,13 +593,17 @@ def main() -> int:
         "backfill_business_days": BACKFILL_BUSINESS_DAYS,
         "sources": notes,
         "tables": tables,
+        "stale_columns": staleness,
+        "dropped_after_target": dropped_after_target,
         "errors": errors,
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    log(f"=== 완료: 표 {len(tables)}/{len(JOBS)}, 오류 {len(errors)}건 ===")
+    stale_n = sum(len(v) for v in staleness.values())
+    log(f"=== 완료: 표 {len(tables)}/{len(JOBS)}, 오류 {len(errors)}건"
+        + (f", 목표일 미수신 컬럼 {stale_n}개" if stale_n else "") + " ===")
     for e in errors:
         log(f"  - {e}")
 
