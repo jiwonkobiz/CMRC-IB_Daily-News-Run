@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-15T09:23:37.662297+09:00",
+  "generated_at": "2026-09-15T09:41:06.834723+09:00",
   "target_date": "2026-09-14",
   "backfill_business_days": 10,
   "sources": {
@@ -40,7 +40,8 @@
             "Russell 2000": 2892.24,
             "VIX": 17.1
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-11",
@@ -52,7 +53,8 @@
             "Russell 2000": 2903.94,
             "VIX": 15.84
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-10",
@@ -64,7 +66,8 @@
             "Russell 2000": 2890.95,
             "VIX": 17.84
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-09",
@@ -76,7 +79,8 @@
             "Russell 2000": 2921.24,
             "VIX": 16.46
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-08",
@@ -88,7 +92,8 @@
             "Russell 2000": 2960.2,
             "VIX": 15.72
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-07",
@@ -100,7 +105,15 @@
             "Russell 2000": 2975.65,
             "VIX": 14.53
           },
-          "carried_forward": true
+          "carried_forward": true,
+          "carried_columns": [
+            "Dow Jones",
+            "Nasdaq",
+            "S&P 500",
+            "Phili 반도체",
+            "Russell 2000",
+            "VIX"
+          ]
         },
         {
           "date": "2026-09-04",
@@ -112,7 +125,8 @@
             "Russell 2000": 2975.65,
             "VIX": 14.53
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-03",
@@ -124,7 +138,8 @@
             "Russell 2000": 2968.27,
             "VIX": 14.32
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-02",
@@ -136,7 +151,8 @@
             "Russell 2000": 2953.17,
             "VIX": 15.2
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-01",
@@ -148,7 +164,8 @@
             "Russell 2000": 2920.13,
             "VIX": 16.34
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         }
       ]
     },
@@ -174,7 +191,16 @@
             "Nikkei 225": 64011.34,
             "대만": 46184.85
           },
-          "carried_forward": true
+          "carried_forward": true,
+          "carried_columns": [
+            "유로스톡스50",
+            "영국",
+            "상해종합",
+            "항셍",
+            "홍콩 H",
+            "Nikkei 225",
+            "대만"
+          ]
         },
         {
           "date": "2026-09-11",
@@ -187,7 +213,8 @@
             "Nikkei 225": 64011.34,
             "대만": 46184.85
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-10",
@@ -200,7 +227,8 @@
             "Nikkei 225": 65270.95,
             "대만": 46940.49
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-09",
@@ -213,7 +241,8 @@
             "Nikkei 225": 65142.78,
             "대만": 47183.36
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-08",
@@ -226,7 +255,8 @@
             "Nikkei 225": 65269.33,
             "대만": 47105.78
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-07",
@@ -239,7 +269,8 @@
             "Nikkei 225": 66399.84,
             "대만": 47326.27
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-04",
@@ -252,7 +283,8 @@
             "Nikkei 225": 65020.94,
             "대만": 46551.13
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-03",
@@ -265,7 +297,8 @@
             "Nikkei 225": 64214.48,
             "대만": 45857.66
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-02",
@@ -278,7 +311,8 @@
             "Nikkei 225": 64325.64,
             "대만": 46164.72
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-01",
@@ -291,7 +325,8 @@
             "Nikkei 225": 66215.34,
             "대만": 46948.72
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         }
       ]
     },
@@ -313,7 +348,8 @@
             "KOSDAQ 150": 1369.05,
             "K밸류업": 3213.54
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-11",
@@ -324,7 +360,8 @@
             "KOSDAQ 150": 1399.14,
             "K밸류업": 3294.41
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-10",
@@ -335,7 +372,8 @@
             "KOSDAQ 150": 1441.76,
             "K밸류업": 3328.16
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-09",
@@ -346,7 +384,8 @@
             "KOSDAQ 150": 1426.18,
             "K밸류업": 3329.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-08",
@@ -357,7 +396,8 @@
             "KOSDAQ 150": 1387.31,
             "K밸류업": 3301.38
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-07",
@@ -368,7 +408,8 @@
             "KOSDAQ 150": 1411.46,
             "K밸류업": 3319.01
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-04",
@@ -379,7 +420,8 @@
             "KOSDAQ 150": 1393.11,
             "K밸류업": 3187.29
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-03",
@@ -390,7 +432,8 @@
             "KOSDAQ 150": 1346.1,
             "K밸류업": 3148.51
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-02",
@@ -401,7 +444,8 @@
             "KOSDAQ 150": 1377.46,
             "K밸류업": 3123.24
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-01",
@@ -412,7 +456,8 @@
             "KOSDAQ 150": 1410.05,
             "K밸류업": 3249.03
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         }
       ]
     },
@@ -434,7 +479,8 @@
             "SB 3Y(AA-)": 4.69,
             "CP91": 3.29
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-11",
@@ -445,7 +491,8 @@
             "SB 3Y(AA-)": 4.688,
             "CP91": 3.29
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-10",
@@ -456,7 +503,8 @@
             "SB 3Y(AA-)": 4.6,
             "CP91": 3.27
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-09",
@@ -467,7 +515,8 @@
             "SB 3Y(AA-)": 4.581,
             "CP91": 3.26
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-08",
@@ -478,7 +527,8 @@
             "SB 3Y(AA-)": 4.575,
             "CP91": 3.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-07",
@@ -489,7 +539,8 @@
             "SB 3Y(AA-)": 4.575,
             "CP91": 3.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-04",
@@ -500,7 +551,8 @@
             "SB 3Y(AA-)": 4.567,
             "CP91": 3.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-03",
@@ -511,7 +563,8 @@
             "SB 3Y(AA-)": 4.567,
             "CP91": 3.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-02",
@@ -522,7 +575,8 @@
             "SB 3Y(AA-)": 4.6,
             "CP91": 3.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-01",
@@ -533,7 +587,8 @@
             "SB 3Y(AA-)": 4.549,
             "CP91": 3.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         }
       ]
     },
@@ -553,7 +608,8 @@
             "US 10Y": 4.97,
             "US 30Y": 5.34
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-11",
@@ -563,7 +619,8 @@
             "US 10Y": 4.96,
             "US 30Y": 5.35
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-10",
@@ -573,7 +630,8 @@
             "US 10Y": 4.95,
             "US 30Y": 5.37
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-09",
@@ -583,7 +641,8 @@
             "US 10Y": 4.83,
             "US 30Y": 5.28
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-08",
@@ -593,7 +652,8 @@
             "US 10Y": 4.8,
             "US 30Y": 5.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-07",
@@ -603,7 +663,13 @@
             "US 10Y": 4.78,
             "US 30Y": 5.24
           },
-          "carried_forward": true
+          "carried_forward": true,
+          "carried_columns": [
+            "US 2Y",
+            "US 5Y",
+            "US 10Y",
+            "US 30Y"
+          ]
         },
         {
           "date": "2026-09-04",
@@ -613,7 +679,8 @@
             "US 10Y": 4.78,
             "US 30Y": 5.24
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-03",
@@ -623,7 +690,8 @@
             "US 10Y": 4.77,
             "US 30Y": 5.25
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-02",
@@ -633,7 +701,8 @@
             "US 10Y": 4.79,
             "US 30Y": 5.27
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-01",
@@ -643,7 +712,8 @@
             "US 10Y": 4.79,
             "US 30Y": 5.27
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         }
       ]
     },
@@ -665,7 +735,8 @@
             "유로/달러": 1.1594,
             "달러/엔": 153.42
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-11",
@@ -676,7 +747,8 @@
             "유로/달러": 1.161,
             "달러/엔": 154.48
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-10",
@@ -687,7 +759,8 @@
             "유로/달러": 1.1634,
             "달러/엔": 153.57
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-09",
@@ -698,7 +771,8 @@
             "유로/달러": 1.1627,
             "달러/엔": 153.48
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-08",
@@ -709,7 +783,8 @@
             "유로/달러": 1.1628,
             "달러/엔": 153.85
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-07",
@@ -720,7 +795,8 @@
             "유로/달러": 1.1614,
             "달러/엔": 156.2
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-04",
@@ -731,7 +807,8 @@
             "유로/달러": 1.1628,
             "달러/엔": 155.66
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-03",
@@ -742,7 +819,8 @@
             "유로/달러": 1.1585,
             "달러/엔": 158.92
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-02",
@@ -753,7 +831,8 @@
             "유로/달러": 1.1596,
             "달러/엔": 160.2
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-01",
@@ -764,7 +843,8 @@
             "유로/달러": 1.1618,
             "달러/엔": 159.75
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         }
       ]
     },
@@ -780,13 +860,14 @@
         {
           "date": "2026-09-14",
           "values": {
-            "WTI": 102.26,
-            "Brent": 106.6,
-            "천연가스": 2.879,
-            "Gold": 4326.3,
-            "구리": 6.387
+            "WTI": 102.68,
+            "Brent": 106.93,
+            "천연가스": 2.882,
+            "Gold": 4327.3,
+            "구리": 6.3835
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-11",
@@ -797,7 +878,8 @@
             "Gold": 4408.9,
             "구리": 6.4695
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-10",
@@ -808,7 +890,8 @@
             "Gold": 4364.5,
             "구리": 6.467
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-09",
@@ -819,7 +902,8 @@
             "Gold": 4416.0,
             "구리": 6.8035
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-08",
@@ -830,7 +914,8 @@
             "Gold": 4393.9,
             "구리": 6.739
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-07",
@@ -841,7 +926,14 @@
             "Gold": 4429.8,
             "구리": 6.597
           },
-          "carried_forward": true
+          "carried_forward": true,
+          "carried_columns": [
+            "WTI",
+            "Brent",
+            "천연가스",
+            "Gold",
+            "구리"
+          ]
         },
         {
           "date": "2026-09-04",
@@ -852,7 +944,8 @@
             "Gold": 4429.8,
             "구리": 6.597
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-03",
@@ -863,7 +956,8 @@
             "Gold": 4491.7,
             "구리": 6.577
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-02",
@@ -874,7 +968,8 @@
             "Gold": 4366.3,
             "구리": 6.501
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         },
         {
           "date": "2026-09-01",
@@ -885,10 +980,71 @@
             "Gold": 4348.0,
             "구리": 6.5065
           },
-          "carried_forward": false
+          "carried_forward": false,
+          "carried_columns": []
         }
       ]
     }
   },
-  "errors": []
+  "stale_columns": {
+    "해외주요국증시": {
+      "유로스톡스50": "2026-09-11",
+      "영국": "2026-09-11",
+      "상해종합": "2026-09-11",
+      "항셍": "2026-09-11",
+      "홍콩 H": "2026-09-11",
+      "Nikkei 225": "2026-09-11",
+      "대만": "2026-09-11"
+    }
+  },
+  "dropped_after_target": {
+    "해외주요국증시": {
+      "Nikkei 225": [
+        "2026-09-15"
+      ]
+    },
+    "국내증시": {
+      "KOSPI": [
+        "2026-09-15"
+      ],
+      "KOSPI 200": [
+        "2026-09-15"
+      ],
+      "KOSDAQ": [
+        "2026-09-15"
+      ],
+      "KOSDAQ 150": [
+        "2026-09-15"
+      ],
+      "K밸류업": [
+        "2026-09-15"
+      ]
+    },
+    "환율": {
+      "달러/원": [
+        "2026-09-15"
+      ],
+      "유로/원": [
+        "2026-09-15"
+      ],
+      "엔/원": [
+        "2026-09-15"
+      ],
+      "유로/달러": [
+        "2026-09-15"
+      ],
+      "달러/엔": [
+        "2026-09-15"
+      ]
+    }
+  },
+  "errors": [
+    "해외주요국증시/유로스톡스50: 목표일 2026-09-14 미수신 (최신 2026-09-11, 직전값 이월됨)",
+    "해외주요국증시/영국: 목표일 2026-09-14 미수신 (최신 2026-09-11, 직전값 이월됨)",
+    "해외주요국증시/상해종합: 목표일 2026-09-14 미수신 (최신 2026-09-11, 직전값 이월됨)",
+    "해외주요국증시/항셍: 목표일 2026-09-14 미수신 (최신 2026-09-11, 직전값 이월됨)",
+    "해외주요국증시/홍콩 H: 목표일 2026-09-14 미수신 (최신 2026-09-11, 직전값 이월됨)",
+    "해외주요국증시/Nikkei 225: 목표일 2026-09-14 미수신 (최신 2026-09-11, 직전값 이월됨) / 목표일 이후 2026-09-15 값은 존재 — 소스 날짜가 하루 밀렸을 가능성",
+    "해외주요국증시/대만: 목표일 2026-09-14 미수신 (최신 2026-09-11, 직전값 이월됨)"
+  ]
 }
