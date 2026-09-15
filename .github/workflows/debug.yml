@@ -24,3 +24,16 @@ jobs:
               s = yf.Ticker(tk).history(period="10d")["Close"].dropna()
               print(f"{name:12} {tk:12} 최신={s.index[-1].date() if len(s) else '없음'}")
           EOF
+
+
+import requests, datetime as dt
+h = {"User-Agent": "Mozilla/5.0"}
+for tk in ["^N225", "^FTSE", "^GSPC"]:
+    u = (f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}"
+         "?range=10d&interval=1d")
+    r = requests.get(u, headers=h, timeout=30).json()["chart"]["result"][0]
+    tz = r["meta"]["exchangeTimezoneName"]
+    closes = r["indicators"]["quote"][0]["close"]
+    print(f"\n{tk}  tz={tz}")
+    for ts, c in zip(r["timestamp"], closes):
+        print("  ", dt.datetime.utcfromtimestamp(ts).date(), c)
