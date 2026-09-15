@@ -1,0 +1,26 @@
+name: debug-yahoo
+on: workflow_dispatch
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install yfinance
+      - run: |
+          python - <<'EOF'
+          import yfinance as yf
+          T = {"유로스톡스50":"^STOXX50E","영국":"^FTSE","상해종합":"000001.SS",
+               "항셍":"^HSI","홍콩 H":"^HSCE","Nikkei 225":"^N225",
+               "대만":"^TWII","(대조)S&P":"^GSPC"}
+          df = yf.download(list(T.values()), start="2026-09-01", end="2026-09-16",
+                           progress=False, auto_adjust=False, group_by="column")["Close"]
+          print("index tz:", df.index.tz)
+          print(df.tail(4).to_string())
+          print("---")
+          for name, tk in T.items():
+              s = yf.Ticker(tk).history(period="10d")["Close"].dropna()
+              print(f"{name:12} {tk:12} 최신={s.index[-1].date() if len(s) else '없음'}")
+          EOF
