@@ -12,28 +12,29 @@ jobs:
       - run: |
           python - <<'EOF'
           import yfinance as yf
+          import requests, datetime as dt
+
           T = {"유로스톡스50":"^STOXX50E","영국":"^FTSE","상해종합":"000001.SS",
                "항셍":"^HSI","홍콩 H":"^HSCE","Nikkei 225":"^N225",
                "대만":"^TWII","(대조)S&P":"^GSPC"}
+
+          print("===== 1. yfinance 배치 =====")
           df = yf.download(list(T.values()), start="2026-09-01", end="2026-09-16",
                            progress=False, auto_adjust=False, group_by="column")["Close"]
           print("index tz:", df.index.tz)
           print(df.tail(4).to_string())
-          print("---")
+
+          print("\n===== 2. 원본 JSON =====")
+          h = {"User-Agent": "Mozilla/5.0"}
           for name, tk in T.items():
-              s = yf.Ticker(tk).history(period="10d")["Close"].dropna()
-              print(f"{name:12} {tk:12} 최신={s.index[-1].date() if len(s) else '없음'}")
+              u = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?range=10d&interval=1d"
+              try:
+                  r = requests.get(u, headers=h, timeout=30).json()["chart"]["result"][0]
+              except Exception as e:
+                  print(f"\n{name} {tk}  FAIL {type(e).__name__}: {e}")
+                  continue
+              closes = r["indicators"]["quote"][0]["close"]
+              print(f"\n{name}  {tk}  tz={r['meta']['exchangeTimezoneName']}")
+              for ts, c in zip(r["timestamp"], closes):
+                  print("   ", dt.datetime.utcfromtimestamp(ts).date(), c)
           EOF
-
-
-import requests, datetime as dt
-h = {"User-Agent": "Mozilla/5.0"}
-for tk in ["^N225", "^FTSE", "^GSPC"]:
-    u = (f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}"
-         "?range=10d&interval=1d")
-    r = requests.get(u, headers=h, timeout=30).json()["chart"]["result"][0]
-    tz = r["meta"]["exchangeTimezoneName"]
-    closes = r["indicators"]["quote"][0]["close"]
-    print(f"\n{tk}  tz={tz}")
-    for ts, c in zip(r["timestamp"], closes):
-        print("  ", dt.datetime.utcfromtimestamp(ts).date(), c)
