@@ -1,17 +1,32 @@
 name: daily-market-close
 
+# 하루 세 번 돈다. 이유는 Yahoo 가 "가장 최근에 끝난 세션"의 확정 일봉을 한동안
+# 내려주지 않기 때문이다(미국 외 지수에서 관측). 아침에 한 번 긁어서 전일 종가를
+# 얻는 방식은 성립하지 않으므로, 각 시장이 닫힌 직후에 값을 잡아 data/store.json 에
+# 적립해 두고 아침 실행이 조립만 한다.
+#
+# 세 실행 모두 같은 스크립트를 돌린다. 스크립트가 시장별 마감 시각을 보고 확정된
+# 세션만 적립하므로, 어느 실행이 무엇을 담당하는지는 아래 주석일 뿐 코드상 분기는 없다.
+#
+# 스케줄 트리거는 공유 인프라라 부하 시 15분~2시간까지 밀린다. 마감(10:00)에서
+# 역산해 08:30 에 두되, 아시아·유럽분이 이미 적립돼 있으므로 아침 실행이 늦어도
+# 직전 영업일 행은 이미 완성돼 있다.
+
 on:
   schedule:
-    # 한국시간 평일 08:30 = UTC 같은 날 00:00 (KST = UTC+9).
-    # 미국 정규장 종가는 KST 새벽 5시, 미 재무부 수익률곡선은 KST 아침 7시경
-    # 확정되므로 09:00 이면 전 시장이 마감된 뒤다.
-    # GitHub 스케줄러는 부하 시 수 분 지연될 수 있다.
+    # 아시아 마감 후 — 도쿄/상해/홍콩/대만 당일 종가 적립
+    - cron: "30 17 * * 1-5"
+      timezone: "Asia/Seoul"
+    # 유럽 마감 후 — 유로스톡스50/FTSE 전일 종가 적립 (KST 새벽이라 화~토)
+    - cron: "30 2 * * 2-6"
+      timezone: "Asia/Seoul"
+    # 게시 — 미국/미국채/국내 수집 + latest.json 조립
     - cron: "30 8 * * 1-5"
       timezone: "Asia/Seoul"
-  workflow_dispatch:        # 수동 실행 버튼
+  workflow_dispatch:
 
 permissions:
-  contents: write           # data/latest.json 커밋용
+  contents: write           # data/*.json 커밋용
 
 concurrency:
   group: daily-market-close
@@ -34,29 +49,54 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Fetch market data
+        id: fetch
         env:
           ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
           KRX_ID: ${{ secrets.KRX_ID }}
           KRX_PW: ${{ secrets.KRX_PW }}
           TZ: Asia/Seoul
-        run: python fetch_market_data.py
+        # 종료코드 2 = 목표일 행 보류. 데이터는 유효하므로 커밋은 해야 한다.
+        # 그래서 여기서 죽이지 않고 코드만 넘긴 뒤 마지막 스텝에서 판정한다.
+        run: |
+          set +e
+          python fetch_market_data.py
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -eq 1 ]; then exit 1; fi
+          exit 0
 
       - name: Commit result
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/latest.json
+          git add data/latest.json data/store.json
           if git diff --staged --quiet; then
             echo "변경 없음 - 커밋 생략"
-          else
-            git commit -m "data: $(TZ=Asia/Seoul date +'%Y-%m-%d') 종가 갱신"
-            git push
+            exit 0
           fi
+          git commit -m "data: $(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M') 시세 적립"
+          # 하루 세 번 돌고 사람이 직접 푸시하기도 하므로 항상 rebase 후 푸시한다.
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && \
+              git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push 재시도 $i"
+            sleep 5
+          done
+          echo "::error::data 커밋 푸시 실패"
+          exit 1
 
       - name: Upload result artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: latest-json
-          path: data/latest.json
+          name: latest-json-${{ github.run_id }}
+          path: |
+            data/latest.json
+            data/store.json
           if-no-files-found: warn
+
+      - name: Flag incomplete target row
+        if: steps.fetch.outputs.code == '2'
+        run: |
+          echo "::warning::목표일 행을 아직 게시하지 못한 표가 있다. \
+          다음 실행에서 채워지면 자동으로 게시된다. latest.json 의 skipped_dates 확인."
