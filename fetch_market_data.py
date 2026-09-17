@@ -1,38 +1,45 @@
 """
 CMRC IB Daily News Run - 전일 종가 수집기
 
-한국시간 매 평일 09:00 에 실행되어, 직전 영업일까지의 종가를 data/latest.json 으로
-게시한다. Office Script 가 이 파일을 읽어 Data 시트 표 7개에 행을 삽입한다.
+하루 여러 번(장 마감 직후) 실행되어 시세를 data/store.json 에 누적하고,
+누적분에서 data/latest.json 을 조립해 게시한다. Office Script 가 latest.json 을
+읽어 Data 시트 표 7개에 행을 삽입한다.
 
-목표일 결정 (미국장 마감 기준)
-  미국 정규장 D일 종가는 한국시간 D+1 새벽 5시에 확정된다. 따라서 D일을 목표일로
-  인정하는 조건은 "현재 시각 >= D+1 08:00 KST"(CUTOFF) 다. 조건을 못 채우면 한
-  평일 더 거슬러 올라간다. 이렇게 하면 새벽에 수동 실행해도 미국 장중 시세가
-  섞이지 않고, 한 행에는 항상 같은 날짜의 확정 종가만 들어간다. 목표일보다
-  최신인 데이터는 수집 직후 전부 버린다.
+왜 누적 저장인가
+  Yahoo 는 "가장 최근에 끝난 세션"의 확정 일봉(EOD)을 한동안 내려주지 않는다.
+  실측: 09:38 KST 에 직전 영업일 바가 미국 외 7개 지수 전부 비어 있었고,
+  같은 시각 S&P 는 멀쩡했으며, 하루 뒤에는 그 바가 채워져 있었다. 즉 미국 외
+  시장은 항상 직전 세션 하나가 미확정으로 남는다. 반면 실시간 경로는 빨라서,
+  장중/마감 직후에 조회하면 그 세션 값이 바로 잡힌다.
+
+  그래서 "아침에 한 번 긁어서 전일 종가를 얻는다"는 전제 자체가 성립하지 않는다.
+  각 시장이 닫힌 직후에 값을 잡아 store.json 에 적립해 두고, 아침 실행은 적립분을
+  조립만 한다. store 는 병합 전용이며 기존 값을 지우지 않는다.
+
+세션 확정 판정 (MARKETS)
+  예전에는 "target 보다 최신인 데이터는 전부 폐기"했는데, 이러면 17:30 실행에서
+  당일 아시아 종가를 잡아 두는 것 자체가 불가능하다. 지금은 시장별 마감 시각을
+  두고, 그 시각을 지난 세션의 바만 받아들인다. 마감 전 값은 장중 시세이므로 버린다.
+
+휴장 vs 미수신 판정
+  거래소 캘린더 없이 구분한다. 컬럼 c 의 날짜 d 에 값이 없을 때,
+    - store 에 d 보다 나중 날짜의 값이 있으면 -> 소스가 d 를 지나갔다는 뜻이므로
+      진짜 휴장. 직전 거래일 값을 이어 적고 carried_columns 에 기록한다.
+    - d 이후 값이 하나도 없으면 -> 아직 안 들어온 것. 이 경우 그 날짜 행 자체를
+      게시하지 않는다.
+  이월값이 시트에 한 번 박히면 Office Script 의 "시트 최신 날짜보다 새 행만 삽입"
+  규칙 때문에 나중에 진짜 값이 와도 영영 못 들어간다. 그래서 미수신은 이월이 아니라
+  보류가 맞다.
 
 행 구성
-  - 단일 시장 표(미국증시/국내증시/미국채/국내채권)는 기준 컬럼 하나로 개장
-    여부를 판정해 행 전체가 같은 날짜에서 온 값이 되게 한다. 노동절에 VIX 만
-    유령 값이 들어오는 식의 혼합 행을 막는다.
+  - 단일 시장 표(미국증시/국내증시/미국채/국내채권)는 기준 컬럼 하나로 개장 여부를
+    판정해 행 전체가 같은 날짜에서 온 값이 되게 한다. 노동절에 VIX 만 유령 값이
+    들어오는 식의 혼합 행을 막는다.
   - 복수 시장 표(해외주요국증시/환율/원자재)는 컬럼별로 판정한다. 영국만 쉬고
-    나머지는 여는 날을 제대로 처리하려면 이쪽이 맞다.
-  - 휴장이면 직전 거래일 값을 이어 적고 carried_forward=true 로 표시한다.
-    어느 컬럼이 이월됐는지는 carried_columns 에 담는다. 표 단위 bool 만으로는
-    "영국만 쉼"과 "표 전체 미수신"이 구분되지 않기 때문이다.
-    원본 파일이 5/25 메모리얼데이 행을 5/22 값으로 채워 둔 관행과 같다.
+    나머지는 여는 날을 처리하려면 이쪽이 맞다.
   - 행 날짜는 모든 표가 한국 평일(월~금) 기준이며, 매 실행마다 최근 평일
-    BACKFILL_BUSINESS_DAYS 개분을 통째로 게시한다. 시트에 이미 있는 날짜를
-    거르는 일은 Office Script 쪽에서 한다.
-
-목표일 미수신 감지
-  소스가 응답은 했는데 목표일 바(bar)만 없는 경우, 예전에는 아무 경고 없이
-  직전 영업일 값이 조용히 이월됐다. 휴장과 구분이 안 되므로 지금은 컬럼별로
-  최신 일자를 target 과 대조해 errors 에 기록한다. 진짜 휴장일에는 false
-  positive 가 나지만, 틀린 값이 조용히 시트에 들어가는 것보다 낫다.
-  목표일 이후 데이터가 폐기된 내역(dropped_after_target)도 컬럼별로 남긴다.
-  "목표일은 미수신인데 목표일+1 은 존재"하면 소스 인덱스가 하루 밀렸다는
-  뜻이므로, 이 조합이 잡히면 errors 메시지에 힌트가 붙는다.
+    BACKFILL_BUSINESS_DAYS 개분 중 게시 가능한 것만 내보낸다. 시트에 이미 있는
+    날짜를 거르는 일은 Office Script 쪽에서 한다.
 
 경제지표 5개 표(CPI/PPI/PCE/PMI/NFP)는 월간 발표라 수기 유지한다.
 
@@ -40,6 +47,11 @@ CMRC IB Daily News Run - 전일 종가 수집기
   ECOS_API_KEY   한국은행 ECOS 오픈API 인증키
   KRX_ID/KRX_PW  KRX 데이터 마켓플레이스 계정. 2025-12-27 회원제 전환 이후
                  pykrx 가 이 환경변수를 직접 읽어 로그인한다.
+
+종료 코드
+  0  정상
+  1  표를 하나도 만들지 못함
+  2  목표일 행을 게시하지 못한 표가 있음 (데이터는 유효하나 아직 불완전)
 """
 
 from __future__ import annotations
@@ -56,37 +68,62 @@ from pathlib import Path
 import requests
 
 KST = timezone(timedelta(hours=9))
-OUT_PATH = Path(__file__).parent / "data" / "latest.json"
+DATA_DIR = Path(__file__).parent / "data"
+OUT_PATH = DATA_DIR / "latest.json"
+STORE_PATH = DATA_DIR / "store.json"
 
 BACKFILL_BUSINESS_DAYS = 10   # 게시할 평일 개수 (연휴 대비 2주치)
 FETCH_CALENDAR_DAYS = 40      # 소스에서 끌어올 달력일 범위
-CUTOFF = time(8, 0)           # D일 종가를 인정하는 D+1 시각 (KST)
+STORE_KEEP_DAYS = 400         # store 보관 기간 (파일 비대화 방지)
+CUTOFF = time(8, 0)           # D일을 목표일로 인정하는 D+1 시각 (KST)
 
-# 표별 컬럼 순서와 소수점 자릿수. 엑셀 표 헤더와 문자열이 정확히 일치해야 한다.
-TABLE_SPEC: dict[str, list[tuple[str, int]]] = {
+# 시장별 "그 세션이 확정되는" 시각 (KST). (날짜 오프셋, 시각).
+# 실제 마감 + 여유 30분~1시간. 이 시각을 지나야 해당 날짜 바를 store 에 적립한다.
+MARKETS: dict[str, tuple[int, time]] = {
+    "EU":     (1, time(2, 0)),    # 유로존 17:30 CET/CEST -> 익일 새벽 KST
+    "UK":     (1, time(2, 0)),    # 런던 16:30 GMT/BST
+    "CN":     (0, time(16, 30)),  # 상해 15:00 CST = 16:00 KST
+    "HK":     (0, time(17, 30)),  # 홍콩 16:00 HKT = 17:00 KST
+    "JP":     (0, time(16, 30)),  # 도쿄 15:30 JST = 15:30 KST
+    "TW":     (0, time(15, 0)),   # 타이베이 13:30 = 14:30 KST
+    "KR":     (0, time(16, 0)),   # 한국 15:30
+    "US":     (1, time(6, 0)),    # 뉴욕 16:00 ET = 익일 05:00/06:00 KST
+    "USBOND": (1, time(7, 30)),   # 재무부 수익률곡선 게시
+    "FX":     (1, time(6, 0)),    # 뉴욕 마감 기준
+    "COMMO":  (1, time(6, 0)),    # NYMEX/COMEX 정산
+}
+
+# 표별 컬럼 순서, 소수점 자릿수, 소속 시장.
+# 엑셀 표 헤더와 컬럼 문자열이 정확히 일치해야 한다.
+TABLE_SPEC: dict[str, list[tuple[str, int, str]]] = {
     "미국증시": [
-        ("Dow Jones", 2), ("Nasdaq", 2), ("S&P 500", 2),
-        ("Phili 반도체", 2), ("Russell 2000", 2), ("VIX", 2),
+        ("Dow Jones", 2, "US"), ("Nasdaq", 2, "US"), ("S&P 500", 2, "US"),
+        ("Phili 반도체", 2, "US"), ("Russell 2000", 2, "US"), ("VIX", 2, "US"),
     ],
     "해외주요국증시": [
-        ("유로스톡스50", 2), ("영국", 2), ("상해종합", 2), ("항셍", 2),
-        ("홍콩 H", 2), ("Nikkei 225", 2), ("대만", 2),
+        ("유로스톡스50", 2, "EU"), ("영국", 2, "UK"), ("상해종합", 2, "CN"),
+        ("항셍", 2, "HK"), ("홍콩 H", 2, "HK"), ("Nikkei 225", 2, "JP"),
+        ("대만", 2, "TW"),
     ],
     "국내증시": [
-        ("KOSPI", 2), ("KOSPI 200", 2), ("KOSDAQ", 2),
-        ("KOSDAQ 150", 2), ("K밸류업", 2),
+        ("KOSPI", 2, "KR"), ("KOSPI 200", 2, "KR"), ("KOSDAQ", 2, "KR"),
+        ("KOSDAQ 150", 2, "KR"), ("K밸류업", 2, "KR"),
     ],
     "국내채권": [
-        ("KR 2Y", 3), ("KR 3Y", 3), ("KR 10Y", 3),
-        ("SB 3Y(AA-)", 3), ("CP91", 2),
+        ("KR 2Y", 3, "KR"), ("KR 3Y", 3, "KR"), ("KR 10Y", 3, "KR"),
+        ("SB 3Y(AA-)", 3, "KR"), ("CP91", 2, "KR"),
     ],
-    "미국채": [("US 2Y", 3), ("US 5Y", 3), ("US 10Y", 3), ("US 30Y", 3)],
+    "미국채": [
+        ("US 2Y", 3, "USBOND"), ("US 5Y", 3, "USBOND"),
+        ("US 10Y", 3, "USBOND"), ("US 30Y", 3, "USBOND"),
+    ],
     "환율": [
-        ("달러/원", 2), ("유로/원", 2), ("엔/원", 4),
-        ("유로/달러", 4), ("달러/엔", 2),
+        ("달러/원", 2, "FX"), ("유로/원", 2, "FX"), ("엔/원", 4, "FX"),
+        ("유로/달러", 4, "FX"), ("달러/엔", 2, "FX"),
     ],
     "원자재": [
-        ("WTI", 2), ("Brent", 2), ("천연가스", 3), ("Gold", 2), ("구리", 4),
+        ("WTI", 2, "COMMO"), ("Brent", 2, "COMMO"), ("천연가스", 3, "COMMO"),
+        ("Gold", 2, "COMMO"), ("구리", 4, "COMMO"),
     ],
 }
 
@@ -99,19 +136,15 @@ TABLE_ANCHOR = {
     "국내채권": "KR 3Y",
 }
 
-TABLE_COLUMNS = {t: [c for c, _ in spec] for t, spec in TABLE_SPEC.items()}
-TABLE_DIGITS = {t: dict(spec) for t, spec in TABLE_SPEC.items()}
+TABLE_COLUMNS = {t: [c for c, _, _ in spec] for t, spec in TABLE_SPEC.items()}
+TABLE_DIGITS = {t: {c: d for c, d, _ in spec} for t, spec in TABLE_SPEC.items()}
+TABLE_MARKET = {t: {c: m for c, _, m in spec} for t, spec in TABLE_SPEC.items()}
 
 errors: list[str] = []
-notes: dict[str, str] = {}   # 컬럼별 실제 사용 소스 기록
-
-# series[표][컬럼] = {date: raw float}
-series: dict[str, dict[str, dict[date, float]]] = {}
-
-# 진단용. dropped_after_target[표][컬럼] = ["2026-09-15", ...]
-dropped_after_target: dict[str, dict[str, list[str]]] = {}
-# staleness[표][컬럼] = 목표일 미수신 시 실제 최신 일자
-staleness: dict[str, dict[str, str]] = {}
+warnings: list[str] = []
+notes: dict[str, str] = {}      # 컬럼별 실제 사용 소스 기록
+admitted: dict[str, list[str]] = {}   # 이번 실행에 새로 적립된 (표/컬럼) -> 날짜들
+held: dict[str, list[str]] = {}       # 장중이라 보류한 (표/컬럼) -> 날짜들
 
 
 def log(msg: str) -> None:
@@ -136,7 +169,7 @@ def weekdays_back(end: date, count: int) -> list[date]:
 
 
 def resolve_target(now: datetime) -> date:
-    """미국장이 확실히 닫힌 마지막 평일. D일 인정 조건은 now >= D+1 CUTOFF KST."""
+    """뉴스런이 채워야 할 날짜. D일 인정 조건은 now >= D+1 CUTOFF KST."""
     d = prev_business_day(now.date())
     for _ in range(10):
         cutoff = datetime.combine(d + timedelta(days=1), CUTOFF, tzinfo=KST)
@@ -144,6 +177,86 @@ def resolve_target(now: datetime) -> date:
             return d
         d = prev_business_day(d)
     return d
+
+
+def session_final(market: str, d: date) -> datetime:
+    """market 의 d 세션이 확정되는 시각(KST)."""
+    off, t = MARKETS[market]
+    return datetime.combine(d + timedelta(days=off), t, tzinfo=KST)
+
+
+# ---------------------------------------------------------------------------
+# store.json - 병합 전용 시세 적립소
+# ---------------------------------------------------------------------------
+
+def load_store() -> dict[str, dict[str, dict[date, float]]]:
+    if not STORE_PATH.exists():
+        return {}
+    try:
+        raw = json.loads(STORE_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        # store 가 깨졌다고 실행을 멈추면 안 된다. 경고만 남기고 새로 쌓는다.
+        warnings.append(f"store.json 읽기 실패, 새로 시작함: {type(exc).__name__}: {exc}")
+        return {}
+    out: dict[str, dict[str, dict[date, float]]] = {}
+    for table, cols in (raw.get("points") or {}).items():
+        out[table] = {}
+        for col, pts in cols.items():
+            parsed: dict[date, float] = {}
+            for k, v in pts.items():
+                try:
+                    parsed[date.fromisoformat(k)] = float(v)
+                except (ValueError, TypeError):
+                    continue
+            out[table][col] = parsed
+    return out
+
+
+def save_store(store: dict[str, dict[str, dict[date, float]]], now: datetime) -> None:
+    horizon = now.date() - timedelta(days=STORE_KEEP_DAYS)
+    payload = {
+        "updated_at": now.isoformat(),
+        "points": {
+            table: {
+                col: {d.isoformat(): v for d, v in sorted(pts.items()) if d >= horizon}
+                for col, pts in cols.items()
+            }
+            for table, cols in store.items()
+        },
+    }
+    STORE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    STORE_PATH.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def merge_into_store(
+    store: dict[str, dict[str, dict[date, float]]],
+    table: str,
+    fetched: dict[str, dict[date, float]],
+    now: datetime,
+) -> None:
+    """확정된 세션의 바만 적립한다. 장중 값은 버리고, 기존 값은 갱신한다.
+
+    같은 날짜를 다시 받으면 덮어쓴다. 마감 직후 잡은 값이 나중에 EOD 확정값으로
+    교체되게 하려는 것이다(클로징 옥션 확정 전후로 소수점이 미세하게 다를 수 있다).
+    """
+    markets = TABLE_MARKET[table]
+    bucket = store.setdefault(table, {})
+    for col, pts in fetched.items():
+        market = markets.get(col)
+        if market is None:
+            continue
+        col_store = bucket.setdefault(col, {})
+        for d, v in pts.items():
+            key = f"{table}/{col}"
+            if now < session_final(market, d):
+                held.setdefault(key, []).append(d.isoformat())
+                continue
+            if col_store.get(d) != v:
+                if d not in col_store:
+                    admitted.setdefault(key, []).append(d.isoformat())
+                col_store[d] = v
 
 
 # ---------------------------------------------------------------------------
@@ -154,7 +267,7 @@ def yahoo_series(table: str, mapping: dict[str, str]) -> dict[str, dict[date, fl
     import yfinance as yf
 
     tickers = list(mapping.values())
-    end = datetime.now(KST).date() + timedelta(days=1)
+    end = datetime.now(KST).date() + timedelta(days=2)
     start = end - timedelta(days=FETCH_CALENDAR_DAYS)
 
     df = yf.download(
@@ -175,6 +288,7 @@ def yahoo_series(table: str, mapping: dict[str, str]) -> dict[str, dict[date, fl
             continue
         s = s.dropna()
         out[col] = {idx.date(): float(v) for idx, v in s.items()}
+        notes[f"{table}/{col}"] = f"Yahoo Finance {ticker}"
         if not out[col]:
             errors.append(f"{table}/{col}: 최근 {FETCH_CALENDAR_DAYS}일 데이터 없음")
     return out
@@ -200,6 +314,30 @@ def fetch_commodity():
         "WTI": "CL=F", "Brent": "BZ=F", "천연가스": "NG=F",
         "Gold": "GC=F", "구리": "HG=F",
     })
+
+
+# ---------------------------------------------------------------------------
+# 환율 (Yahoo Finance)
+# ---------------------------------------------------------------------------
+#
+# ECOS 매매기준율(서울외국환중개 원출처)을 한 번 붙여 봤으나 되돌렸다.
+# 매매기준율 D일자 고시는 D-1 거래를 반영하므로, 그대로 D일 행에 넣으면
+# 환율만 하루 밀린다. 야후 종가와 날짜별로 대조했을 때 같은 날 기준으로는
+# 평균 8원 이상 벌어지고 ECOS 를 하루 당기면 2원 안으로 붙었다.
+# 다른 6개 표가 모두 "그날 시장 종가"이므로, 한 행 안의 날짜 일관성을
+# 우선해 야후 종가로 통일한다.
+
+FX_TICKERS = {
+    "달러/원": "KRW=X",
+    "유로/원": "EURKRW=X",
+    "엔/원": "JPYKRW=X",      # 1엔 기준 (원본 파일이 9.38 형태로 기록 중)
+    "유로/달러": "EURUSD=X",
+    "달러/엔": "JPY=X",
+}
+
+
+def fetch_fx():
+    return yahoo_series("환율", FX_TICKERS)
 
 
 # ---------------------------------------------------------------------------
@@ -339,8 +477,6 @@ def fetch_kr_rates():
     api_key = _ecos_key()
     items = _ecos_items(api_key, ECOS_RATE_STAT)
     log(f"  ECOS {ECOS_RATE_STAT} 항목 {len(items)}개")
-    for name in sorted(items):
-        log(f"    · {name}")
 
     # CP91 은 CP(기업어음) 91일물이다. CD(양도성예금증서) 가 아니다.
     wanted = {
@@ -370,33 +506,6 @@ def fetch_kr_rates():
         if not out[col]:
             errors.append(f"국내채권/{col}: 조회 결과 없음 ({matched})")
 
-    return out
-
-
-# ---------------------------------------------------------------------------
-# 환율 (Yahoo Finance)
-# ---------------------------------------------------------------------------
-#
-# ECOS 매매기준율(서울외국환중개 원출처)을 한 번 붙여 봤으나 되돌렸다.
-# 매매기준율 D일자 고시는 D-1 거래를 반영하므로, 그대로 D일 행에 넣으면
-# 환율만 하루 밀린다. 야후 종가와 날짜별로 대조했을 때 같은 날 기준으로는
-# 평균 8원 이상 벌어지고 ECOS 를 하루 당기면 2원 안으로 붙었다.
-# 다른 6개 표가 모두 "그날 시장 종가"이므로, 한 행 안의 날짜 일관성을
-# 우선해 야후 종가로 통일한다.
-
-FX_TICKERS = {
-    "달러/원": "KRW=X",
-    "유로/원": "EURKRW=X",
-    "엔/원": "JPYKRW=X",      # 1엔 기준 (원본 파일이 9.38 형태로 기록 중)
-    "유로/달러": "EURUSD=X",
-    "달러/엔": "JPY=X",
-}
-
-
-def fetch_fx():
-    out = yahoo_series("환율", FX_TICKERS)
-    for col, ticker in FX_TICKERS.items():
-        notes[f"환율/{col}"] = f"Yahoo Finance {ticker}"
     return out
 
 
@@ -435,6 +544,7 @@ def fetch_us_rates():
                 out[col][d] = float(raw)
 
     for col in mapping:
+        notes[f"미국채/{col}"] = "U.S. Treasury daily yield curve CSV"
         if not out[col]:
             errors.append(f"미국채/{col}: Treasury CSV 에 값 없음")
 
@@ -455,72 +565,62 @@ JOBS = [
     ("원자재", fetch_commodity),
 ]
 
+EXACT, CARRIED, MISSING, EMPTY = "exact", "carried", "missing", "empty"
 
-def _effective(points: dict[date, float], d: date):
-    """d 의 값, 없으면 직전 거래일 값. (value, carried) 반환."""
+
+def resolve_cell(points: dict[date, float], d: date):
+    """(값, 상태, 실제 일자). 휴장과 미수신을 store 내용만으로 구분한다."""
+    if not points:
+        return None, EMPTY, None          # 컬럼 자체가 비어 있음 (수집 실패)
     if d in points:
-        return points[d], False
-    earlier = [pd for pd in points if pd < d]
-    if earlier:
-        return points[max(earlier)], True
-    return None, False
+        return points[d], EXACT, d
+    if any(p > d for p in points):
+        earlier = [p for p in points if p < d]
+        if earlier:
+            e = max(earlier)
+            return points[e], CARRIED, e   # 소스가 d 를 지나감 -> 진짜 휴장
+        return None, EMPTY, None
+    return None, MISSING, None             # d 이후가 없음 -> 아직 안 들어옴
 
 
-def check_freshness(table: str, raw: dict[str, dict[date, float]], target: date) -> None:
-    """목표일 바가 없는 컬럼을 errors 에 기록한다.
-
-    휴장이면 false positive 지만, 소스 미갱신/날짜 밀림이 조용히 이월되는 것보다
-    낫다. 목표일은 없는데 목표일 이후 데이터가 폐기됐다면 소스 인덱스가 하루
-    밀렸다는 강한 신호이므로 메시지에 힌트를 붙인다.
-    """
-    future = dropped_after_target.get(table, {})
-    for col, pts in series.get(table, {}).items():
-        if not pts:
-            continue          # 빈 컬럼은 이미 fetch 단계에서 errors 에 잡힌다
-        newest = max(pts)
-        if newest >= target:
-            continue
-        staleness.setdefault(table, {})[col] = newest.isoformat()
-        ahead = future.get(col) or []
-        hint = (
-            f" / 목표일 이후 {ahead[0]} 값은 존재 — 소스 날짜가 하루 밀렸을 가능성"
-            if ahead else ""
-        )
-        errors.append(
-            f"{table}/{col}: 목표일 {target.isoformat()} 미수신 "
-            f"(최신 {newest.isoformat()}, 직전값 이월됨){hint}"
-        )
-
-
-def build_rows(table: str, cal_dates: list[date]) -> list[dict]:
+def build_rows(table: str, store_table: dict[str, dict[date, float]],
+               cal_dates: list[date]) -> tuple[list[dict], list[str]]:
     digits = TABLE_DIGITS[table]
-    data = series.get(table, {})
     anchor = TABLE_ANCHOR.get(table)
     rows: list[dict] = []
+    skipped: list[str] = []
 
     for d in cal_dates:
         values: dict[str, float | None] = {}
         carried_cols: list[str] = []
 
-        if anchor and data.get(anchor):
-            # 기준 컬럼으로 유효일자를 정하고 행 전체를 그 날짜에서 읽는다.
-            anchor_pts = data[anchor]
-            eff = d if d in anchor_pts else max(
-                (pd for pd in anchor_pts if pd < d), default=None
-            )
-            row_carried = eff is not None and eff != d
+        if anchor:
+            _, status, eff = resolve_cell(store_table.get(anchor, {}), d)
+            if status == MISSING:
+                skipped.append(d.isoformat())
+                continue
+            if status == EMPTY:
+                # 앵커가 통째로 비었으면 이 표는 판정 기준이 없다.
+                skipped.append(d.isoformat())
+                continue
             for col in TABLE_COLUMNS[table]:
-                v = data.get(col, {}).get(eff) if eff else None
+                v = store_table.get(col, {}).get(eff)
                 values[col] = round(v, digits[col]) if v is not None else None
-            if row_carried:
-                # 앵커 표는 행 전체가 같은 날짜에서 오므로 값이 찬 컬럼 전부가 이월이다.
+            if status == CARRIED:
                 carried_cols = [c for c in TABLE_COLUMNS[table] if values[c] is not None]
         else:
+            incomplete = False
             for col in TABLE_COLUMNS[table]:
-                v, c = _effective(data.get(col, {}), d)
+                v, status, _ = resolve_cell(store_table.get(col, {}), d)
+                if status == MISSING:
+                    incomplete = True
+                    break
                 values[col] = round(v, digits[col]) if v is not None else None
-                if c:
+                if status == CARRIED:
                     carried_cols.append(col)
+            if incomplete:
+                skipped.append(d.isoformat())
+                continue
 
         rows.append({
             "date": d.isoformat(),
@@ -530,84 +630,103 @@ def build_rows(table: str, cal_dates: list[date]) -> list[dict]:
         })
 
     rows.reverse()  # 시트와 같은 최신순
-    return rows
+    return rows, skipped
 
 
 def main() -> int:
     now = datetime.now(KST)
     target = resolve_target(now)
     cal_dates = weekdays_back(target, BACKFILL_BUSINESS_DAYS)
+    store = load_store()
 
     log(f"=== 수집 시작 {now.isoformat()} ===")
-    log(f"목표일(미국장 마감 확정 기준): {target.isoformat()}")
+    log(f"목표일: {target.isoformat()}")
     log(f"게시 범위: {cal_dates[0]} ~ {cal_dates[-1]} (평일 {len(cal_dates)}개)")
 
+    fetched_tables: set[str] = set()
     for name, fn in JOBS:
         log(f"[{name}]")
         try:
             raw = fn()
-            # 목표일보다 최신인 데이터는 장중 시세일 수 있으므로 버린다.
-            series[name] = {
-                col: {d: v for d, v in pts.items() if d <= target}
-                for col, pts in raw.items()
-            }
-            # 폐기 내역을 컬럼별로 남긴다. 미수신 진단에 쓴다.
-            dropped_map = {
-                col: sorted(d.isoformat() for d in pts if d > target)
-                for col, pts in raw.items()
-            }
-            dropped_map = {c: v for c, v in dropped_map.items() if v}
-            if dropped_map:
-                dropped_after_target[name] = dropped_map
-
-            # 컬럼별 건수와 최신 일자를 같이 찍는다. 한 컬럼만 뒤처지면 여기서 보인다.
+            merge_into_store(store, name, raw, now)
+            fetched_tables.add(name)
             detail = ", ".join(
                 f"{c}={len(v)}건/{max(v).isoformat() if v else '없음'}"
-                for c, v in series[name].items()
+                for c, v in store.get(name, {}).items()
             )
-            dropped_n = sum(len(v) for v in dropped_map.values())
-            log(f"  OK {detail}"
-                + (f"  (목표일 이후 {dropped_n}건 폐기)" if dropped_n else ""))
-
-            check_freshness(name, raw, target)
+            log(f"  OK store: {detail}")
         except Exception as exc:
             errors.append(f"{name}: {type(exc).__name__}: {exc}")
             log(f"  FAIL {name}: {exc}")
             traceback.print_exc()
 
+    save_store(store, now)
+
     tables: dict[str, dict] = {}
+    skipped_all: dict[str, list[str]] = {}
+    target_iso = target.isoformat()
+    incomplete_tables: list[str] = []
+
     for name, _ in JOBS:
-        if name not in series:
+        store_table = store.get(name)
+        if not store_table:
             continue
-        rows = build_rows(name, cal_dates)
+        rows, skipped = build_rows(name, store_table, cal_dates)
+        if skipped:
+            skipped_all[name] = skipped
+        if not rows:
+            warnings.append(f"{name}: 게시 가능한 행이 없음 (보류 {len(skipped)}일)")
+            continue
         tables[name] = {"columns": TABLE_COLUMNS[name], "rows": rows}
         newest = rows[0]
         flag = ""
         if newest["carried_forward"]:
-            flag = f" (carry-forward: {', '.join(newest['carried_columns'])})"
+            flag = f" (휴장 이월: {', '.join(newest['carried_columns'])})"
         log(f"  {name}: {len(rows)}행, 최신 {newest['date']}{flag}")
+        if target_iso in skipped:
+            incomplete_tables.append(name)
+            warnings.append(
+                f"{name}: 목표일 {target_iso} 아직 미수신 — 행 보류. "
+                f"다음 실행에서 채워지면 그때 게시된다."
+            )
 
     payload = {
         "generated_at": now.isoformat(),
-        "target_date": target.isoformat(),
+        "target_date": target_iso,
         "backfill_business_days": BACKFILL_BUSINESS_DAYS,
         "sources": notes,
         "tables": tables,
-        "stale_columns": staleness,
-        "dropped_after_target": dropped_after_target,
+        "skipped_dates": skipped_all,
+        "admitted_this_run": admitted,
+        "held_intraday": held,
+        "warnings": warnings,
         "errors": errors,
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    stale_n = sum(len(v) for v in staleness.values())
-    log(f"=== 완료: 표 {len(tables)}/{len(JOBS)}, 오류 {len(errors)}건"
-        + (f", 목표일 미수신 컬럼 {stale_n}개" if stale_n else "") + " ===")
+    if admitted:
+        log("신규 적립:")
+        for k, v in admitted.items():
+            log(f"  + {k}: {', '.join(sorted(v))}")
+    if held:
+        log("장중이라 보류:")
+        for k, v in held.items():
+            log(f"  ~ {k}: {', '.join(sorted(v))}")
+
+    log(f"=== 완료: 표 {len(tables)}/{len(JOBS)}, "
+        f"오류 {len(errors)}건, 경고 {len(warnings)}건 ===")
+    for w in warnings:
+        log(f"  ! {w}")
     for e in errors:
         log(f"  - {e}")
 
-    return 1 if not tables else 0
+    if not tables:
+        return 1
+    if incomplete_tables:
+        return 2
+    return 0
 
 
 if __name__ == "__main__":
