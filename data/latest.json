@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T09:04:16.672684+09:00",
+  "generated_at": "2026-09-17T09:17:59.478343+09:00",
   "target_date": "2026-09-16",
   "backfill_business_days": 10,
   "sources": {
@@ -38,7 +38,7 @@
             "S&P 500": 7551.81,
             "Phili 반도체": 11246.11,
             "Russell 2000": 2858.81,
-            "VIX": null
+            "VIX": 17.71
           },
           "carried_forward": false,
           "carried_columns": []
@@ -51,7 +51,7 @@
             "S&P 500": 7585.73,
             "Phili 반도체": 11175.55,
             "Russell 2000": 2870.29,
-            "VIX": null
+            "VIX": 17.2
           },
           "carried_forward": false,
           "carried_columns": []
@@ -64,7 +64,7 @@
             "S&P 500": 7619.98,
             "Phili 반도체": 11131.28,
             "Russell 2000": 2892.24,
-            "VIX": null
+            "VIX": 17.1
           },
           "carried_forward": false,
           "carried_columns": []
@@ -77,7 +77,7 @@
             "S&P 500": 7656.98,
             "Phili 반도체": 11824.0,
             "Russell 2000": 2903.94,
-            "VIX": null
+            "VIX": 15.84
           },
           "carried_forward": false,
           "carried_columns": []
@@ -90,7 +90,7 @@
             "S&P 500": 7591.7,
             "Phili 반도체": 11614.17,
             "Russell 2000": 2890.95,
-            "VIX": null
+            "VIX": 17.84
           },
           "carried_forward": false,
           "carried_columns": []
@@ -103,7 +103,7 @@
             "S&P 500": 7636.36,
             "Phili 반도체": 11931.32,
             "Russell 2000": 2921.24,
-            "VIX": null
+            "VIX": 16.46
           },
           "carried_forward": false,
           "carried_columns": []
@@ -116,7 +116,7 @@
             "S&P 500": 7673.52,
             "Phili 반도체": 11887.87,
             "Russell 2000": 2960.2,
-            "VIX": null
+            "VIX": 15.72
           },
           "carried_forward": false,
           "carried_columns": []
@@ -129,7 +129,7 @@
             "S&P 500": 7718.6,
             "Phili 반도체": 11735.26,
             "Russell 2000": 2975.65,
-            "VIX": null
+            "VIX": 14.53
           },
           "carried_forward": true,
           "carried_columns": [
@@ -137,7 +137,8 @@
             "Nasdaq",
             "S&P 500",
             "Phili 반도체",
-            "Russell 2000"
+            "Russell 2000",
+            "VIX"
           ]
         },
         {
@@ -148,7 +149,7 @@
             "S&P 500": 7718.6,
             "Phili 반도체": 11735.26,
             "Russell 2000": 2975.65,
-            "VIX": null
+            "VIX": 14.53
           },
           "carried_forward": false,
           "carried_columns": []
@@ -161,7 +162,7 @@
             "S&P 500": 7747.71,
             "Phili 반도체": 11352.13,
             "Russell 2000": 2968.27,
-            "VIX": null
+            "VIX": 14.32
           },
           "carried_forward": false,
           "carried_columns": []
@@ -859,11 +860,11 @@
         {
           "date": "2026-09-16",
           "values": {
-            "WTI": 101.76,
-            "Brent": 105.2,
-            "천연가스": 2.891,
-            "Gold": 4310.4,
-            "구리": 6.46
+            "WTI": 101.54,
+            "Brent": 105.17,
+            "천연가스": 2.895,
+            "Gold": 4309.9,
+            "구리": 6.4555
           },
           "carried_forward": false,
           "carried_columns": []
@@ -997,6 +998,11 @@
     }
   },
   "dropped_after_target": {
+    "해외주요국증시": {
+      "Nikkei 225": [
+        "2026-09-17"
+      ]
+    },
     "환율": {
       "달러/원": [
         "2026-09-17"
@@ -1016,13 +1022,12 @@
     }
   },
   "errors": [
-    "미국증시/VIX: 최근 40일 데이터 없음",
     "해외주요국증시/유로스톡스50: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨)",
     "해외주요국증시/영국: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨)",
     "해외주요국증시/상해종합: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨)",
     "해외주요국증시/항셍: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨)",
     "해외주요국증시/홍콩 H: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨)",
-    "해외주요국증시/Nikkei 225: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨)",
+    "해외주요국증시/Nikkei 225: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨) / 목표일 이후 2026-09-17 값은 존재 — 소스 날짜가 하루 밀렸을 가능성",
     "해외주요국증시/대만: 목표일 2026-09-16 미수신 (최신 2026-09-15, 직전값 이월됨)"
   ]
 }
