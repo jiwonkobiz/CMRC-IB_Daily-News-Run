@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-25T05:36:51.622140+09:00",
-  "target_date": "2026-09-23",
+  "generated_at": "2026-09-25T10:42:21.904345+09:00",
+  "target_date": "2026-09-24",
   "backfill_business_days": 10,
   "sources": {
     "미국증시/Dow Jones": "Yahoo Finance ^DJI",
@@ -42,148 +42,6 @@
     "원자재/구리": "Yahoo Finance HG=F"
   },
   "tables": {
-    "미국증시": {
-      "columns": [
-        "Dow Jones",
-        "Nasdaq",
-        "S&P 500",
-        "Phili 반도체",
-        "Russell 2000",
-        "VIX"
-      ],
-      "rows": [
-        {
-          "date": "2026-09-23",
-          "values": {
-            "Dow Jones": 51511.59,
-            "Nasdaq": 26936.04,
-            "S&P 500": 7706.03,
-            "Phili 반도체": 12534.28,
-            "Russell 2000": 2838.66,
-            "VIX": 15.18
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-22",
-          "values": {
-            "Dow Jones": 51863.69,
-            "Nasdaq": 27244.28,
-            "S&P 500": 7764.64,
-            "Phili 반도체": 12689.82,
-            "Russell 2000": 2889.92,
-            "VIX": 14.21
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-21",
-          "values": {
-            "Dow Jones": 52048.83,
-            "Nasdaq": 27122.09,
-            "S&P 500": 7764.7,
-            "Phili 반도체": 12433.17,
-            "Russell 2000": 2875.36,
-            "VIX": 14.87
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-18",
-          "values": {
-            "Dow Jones": 51682.64,
-            "Nasdaq": 26522.54,
-            "S&P 500": 7650.5,
-            "Phili 반도체": 11921.69,
-            "Russell 2000": 2860.4,
-            "VIX": 14.81
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-17",
-          "values": {
-            "Dow Jones": 51778.04,
-            "Nasdaq": 26418.3,
-            "S&P 500": 7637.76,
-            "Phili 반도체": 11599.49,
-            "Russell 2000": 2874.63,
-            "VIX": 15.44
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-16",
-          "values": {
-            "Dow Jones": 51461.9,
-            "Nasdaq": 25978.43,
-            "S&P 500": 7551.81,
-            "Phili 반도체": 11246.11,
-            "Russell 2000": 2858.81,
-            "VIX": 17.71
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "Dow Jones": 52093.11,
-            "Nasdaq": 25981.57,
-            "S&P 500": 7585.73,
-            "Phili 반도체": 11175.55,
-            "Russell 2000": 2870.29,
-            "VIX": 17.2
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-14",
-          "values": {
-            "Dow Jones": 52421.2,
-            "Nasdaq": 26186.41,
-            "S&P 500": 7619.98,
-            "Phili 반도체": 11131.28,
-            "Russell 2000": 2892.24,
-            "VIX": 17.1
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-11",
-          "values": {
-            "Dow Jones": 52573.29,
-            "Nasdaq": 26333.04,
-            "S&P 500": 7656.98,
-            "Phili 반도체": 11824.0,
-            "Russell 2000": 2903.94,
-            "VIX": 15.84
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-10",
-          "values": {
-            "Dow Jones": 52064.1,
-            "Nasdaq": 26081.72,
-            "S&P 500": 7591.7,
-            "Phili 반도체": 11614.17,
-            "Russell 2000": 2890.95,
-            "VIX": 17.84
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        }
-      ]
-    },
     "해외주요국증시": {
       "columns": [
         "유로스톡스50",
@@ -195,6 +53,20 @@
         "대만"
       ],
       "rows": [
+        {
+          "date": "2026-09-24",
+          "values": {
+            "유로스톡스50": 6272.5,
+            "영국": 10680.0,
+            "상해종합": 3888.37,
+            "항셍": 24761.13,
+            "홍콩 H": 8266.01,
+            "Nikkei 225": 65513.99,
+            "대만": 48024.6
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-23",
           "values": {
@@ -326,20 +198,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-10",
-          "values": {
-            "유로스톡스50": 6268.97,
-            "영국": 10608.9,
-            "상해종합": 3934.4,
-            "항셍": 24954.47,
-            "홍콩 H": 8274.78,
-            "Nikkei 225": 65270.95,
-            "대만": 46940.49
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -456,18 +314,6 @@
             "KOSDAQ": 820.64,
             "KOSDAQ 150": 1399.14,
             "K밸류업": 3294.41
-          },
-          "carried_forward": false,
-          "carried_columns": []
-        },
-        {
-          "date": "2026-09-10",
-          "values": {
-            "KOSPI": 7033.92,
-            "KOSPI 200": 1112.13,
-            "KOSDAQ": 836.92,
-            "KOSDAQ 150": 1441.76,
-            "K밸류업": 3328.16
           },
           "carried_forward": false,
           "carried_columns": []
@@ -590,18 +436,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-10",
-          "values": {
-            "KR 2Y": 3.837,
-            "KR 3Y": 3.93,
-            "KR 10Y": 4.453,
-            "SB 3Y(AA-)": 4.6,
-            "CP91": 3.27
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -613,6 +447,17 @@
         "US 30Y"
       ],
       "rows": [
+        {
+          "date": "2026-09-24",
+          "values": {
+            "US 2Y": 4.87,
+            "US 5Y": 5.03,
+            "US 10Y": 5.18,
+            "US 30Y": 5.47
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-23",
           "values": {
@@ -711,17 +556,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-10",
-          "values": {
-            "US 2Y": 4.56,
-            "US 5Y": 4.75,
-            "US 10Y": 4.95,
-            "US 30Y": 5.37
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -734,6 +568,18 @@
         "달러/엔"
       ],
       "rows": [
+        {
+          "date": "2026-09-24",
+          "values": {
+            "달러/원": 1362.5,
+            "유로/원": 1552.71,
+            "엔/원": 8.6158,
+            "유로/달러": 1.1382,
+            "달러/엔": 158.26
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-23",
           "values": {
@@ -841,18 +687,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-10",
-          "values": {
-            "달러/원": 1339.17,
-            "유로/원": 1557.39,
-            "엔/원": 8.7178,
-            "유로/달러": 1.1634,
-            "달러/엔": 153.57
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -865,6 +699,18 @@
         "구리"
       ],
       "rows": [
+        {
+          "date": "2026-09-24",
+          "values": {
+            "WTI": 93.28,
+            "Brent": 105.73,
+            "천연가스": 3.261,
+            "Gold": 4328.8,
+            "구리": 6.76
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-23",
           "values": {
@@ -972,40 +818,40 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-10",
-          "values": {
-            "WTI": 102.48,
-            "Brent": 107.63,
-            "천연가스": 2.834,
-            "Gold": 4407.3,
-            "구리": 6.467
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     }
   },
-  "skipped_dates": {},
-  "failed_columns": {},
-  "admitted_this_run": {
-    "해외주요국증시/유로스톡스50": [
+  "skipped_dates": {
+    "미국증시": [
+      "2026-09-11",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18",
+      "2026-09-21",
+      "2026-09-22",
+      "2026-09-23",
       "2026-09-24"
     ],
-    "해외주요국증시/영국": [
+    "국내증시": [
+      "2026-09-24"
+    ],
+    "국내채권": [
       "2026-09-24"
     ]
   },
-  "held_intraday": {
+  "failed_columns": {
+    "미국증시": {
+      "S&P 500": "최근 40일 데이터 없음 (^GSPC)"
+    }
+  },
+  "admitted_this_run": {
     "미국증시/Dow Jones": [
       "2026-09-24"
     ],
     "미국증시/Nasdaq": [
-      "2026-09-24"
-    ],
-    "미국증시/S&P 500": [
       "2026-09-24"
     ],
     "미국증시/Phili 반도체": [
@@ -1060,6 +906,32 @@
       "2026-09-24"
     ]
   },
-  "warnings": [],
-  "errors": []
+  "held_intraday": {
+    "해외주요국증시/Nikkei 225": [
+      "2026-09-25"
+    ],
+    "환율/달러/원": [
+      "2026-09-25"
+    ],
+    "환율/유로/원": [
+      "2026-09-25"
+    ],
+    "환율/엔/원": [
+      "2026-09-25"
+    ],
+    "환율/유로/달러": [
+      "2026-09-25"
+    ],
+    "환율/달러/엔": [
+      "2026-09-25"
+    ]
+  },
+  "warnings": [
+    "미국증시: 게시 가능한 행이 없음 (보류 10일)",
+    "국내증시: 목표일 2026-09-24 아직 미수신 — 행 보류. 다음 실행에서 채워지면 그때 게시된다.",
+    "국내채권: 목표일 2026-09-24 아직 미수신 — 행 보류. 다음 실행에서 채워지면 그때 게시된다."
+  ],
+  "errors": [
+    "미국증시/S&P 500: 최근 40일 데이터 없음 (^GSPC)"
+  ]
 }
