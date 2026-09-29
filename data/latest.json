@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T09:01:21.263571+09:00",
+  "generated_at": "2026-09-29T09:09:18.393441+09:00",
   "target_date": "2026-09-28",
   "backfill_business_days": 10,
   "sources": {
@@ -864,11 +864,11 @@
         {
           "date": "2026-09-28",
           "values": {
-            "WTI": 93.25,
-            "Brent": 98.67,
+            "WTI": 93.16,
+            "Brent": 98.6,
             "천연가스": 3.139,
-            "Gold": 4155.9,
-            "구리": 6.6205
+            "Gold": 4158.9,
+            "구리": 6.6235
           },
           "carried_forward": false,
           "carried_columns": []
