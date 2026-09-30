@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-30T06:28:50.881559+09:00",
-  "target_date": "2026-09-28",
+  "generated_at": "2026-09-30T09:18:15.556522+09:00",
+  "target_date": "2026-09-29",
   "backfill_business_days": 10,
   "sources": {
     "미국증시/Dow Jones": "Yahoo Finance ^DJI",
@@ -21,6 +21,11 @@
     "국내증시/KOSDAQ": "KRX 코스닥 (2001)",
     "국내증시/KOSDAQ 150": "KRX 코스닥 150 (2203)",
     "국내증시/K밸류업": "KRX 코리아 밸류업 지수 (5302)",
+    "국내채권/KR 2Y": "ECOS 817Y002 국고채(2년)",
+    "국내채권/KR 3Y": "ECOS 817Y002 국고채(3년)",
+    "국내채권/KR 10Y": "ECOS 817Y002 국고채(10년)",
+    "국내채권/SB 3Y(AA-)": "ECOS 817Y002 회사채(3년, AA-)",
+    "국내채권/CP91": "ECOS 817Y002 CP(91일)",
     "미국채/US 2Y": "U.S. Treasury daily yield curve CSV",
     "미국채/US 5Y": "U.S. Treasury daily yield curve CSV",
     "미국채/US 10Y": "U.S. Treasury daily yield curve CSV",
@@ -47,6 +52,19 @@
         "VIX"
       ],
       "rows": [
+        {
+          "date": "2026-09-29",
+          "values": {
+            "Dow Jones": 51349.92,
+            "Nasdaq": 26797.54,
+            "S&P 500": 7670.84,
+            "Phili 반도체": 12629.16,
+            "Russell 2000": 2807.92,
+            "VIX": 16.04
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-28",
           "values": {
@@ -163,19 +181,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "Dow Jones": 52093.11,
-            "Nasdaq": 25981.57,
-            "S&P 500": 7585.73,
-            "Phili 반도체": 11175.55,
-            "Russell 2000": 2870.29,
-            "VIX": 17.2
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -190,6 +195,20 @@
         "대만"
       ],
       "rows": [
+        {
+          "date": "2026-09-29",
+          "values": {
+            "유로스톡스50": 6320.26,
+            "영국": 10636.71,
+            "상해종합": 3830.45,
+            "항셍": 24523.57,
+            "홍콩 H": 8178.81,
+            "Nikkei 225": 65481.27,
+            "대만": 47631.96
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-28",
           "values": {
@@ -326,20 +345,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "유로스톡스50": 6236.5,
-            "영국": 10658.1,
-            "상해종합": 3864.28,
-            "항셍": 24667.24,
-            "홍콩 H": 8204.91,
-            "Nikkei 225": 63484.1,
-            "대만": 45511.49
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -352,6 +357,18 @@
         "K밸류업"
       ],
       "rows": [
+        {
+          "date": "2026-09-29",
+          "values": {
+            "KOSPI": 6870.81,
+            "KOSPI 200": 1088.15,
+            "KOSDAQ": 849.8,
+            "KOSDAQ 150": 1441.71,
+            "K밸류업": 3253.6
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-28",
           "values": {
@@ -471,18 +488,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "KOSPI": 6627.26,
-            "KOSPI 200": 1042.46,
-            "KOSDAQ": 812.41,
-            "KOSDAQ 150": 1379.96,
-            "K밸류업": 3165.62
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -495,6 +500,18 @@
         "CP91"
       ],
       "rows": [
+        {
+          "date": "2026-09-29",
+          "values": {
+            "KR 2Y": 4.031,
+            "KR 3Y": 4.076,
+            "KR 10Y": 4.476,
+            "SB 3Y(AA-)": 4.755,
+            "CP91": 3.41
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-28",
           "values": {
@@ -614,18 +631,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "KR 2Y": 4.005,
-            "KR 3Y": 4.091,
-            "KR 10Y": 4.6,
-            "SB 3Y(AA-)": 4.75,
-            "CP91": 3.29
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -637,6 +642,17 @@
         "US 30Y"
       ],
       "rows": [
+        {
+          "date": "2026-09-29",
+          "values": {
+            "US 2Y": 4.89,
+            "US 5Y": 5.06,
+            "US 10Y": 5.26,
+            "US 30Y": 5.59
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-28",
           "values": {
@@ -735,17 +751,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "US 2Y": 4.67,
-            "US 5Y": 4.83,
-            "US 10Y": 5.0,
-            "US 30Y": 5.36
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -758,6 +763,18 @@
         "달러/엔"
       ],
       "rows": [
+        {
+          "date": "2026-09-29",
+          "values": {
+            "달러/원": 1359.56,
+            "유로/원": 1544.98,
+            "엔/원": 8.6346,
+            "유로/달러": 1.1373,
+            "달러/엔": 157.36
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-28",
           "values": {
@@ -865,18 +882,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "달러/원": 1345.61,
-            "유로/원": 1555.19,
-            "엔/원": 8.7128,
-            "유로/달러": 1.1549,
-            "달러/엔": 154.38
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     },
@@ -889,6 +894,18 @@
         "구리"
       ],
       "rows": [
+        {
+          "date": "2026-09-29",
+          "values": {
+            "WTI": 89.36,
+            "Brent": 96.22,
+            "천연가스": 3.027,
+            "Gold": 4217.0,
+            "구리": 6.654
+          },
+          "carried_forward": false,
+          "carried_columns": []
+        },
         {
           "date": "2026-09-28",
           "values": {
@@ -996,18 +1013,6 @@
           },
           "carried_forward": false,
           "carried_columns": []
-        },
-        {
-          "date": "2026-09-15",
-          "values": {
-            "WTI": 105.83,
-            "Brent": 108.75,
-            "천연가스": 2.919,
-            "Gold": 4332.8,
-            "구리": 6.3685
-          },
-          "carried_forward": false,
-          "carried_columns": []
         }
       ]
     }
@@ -1015,62 +1020,6 @@
   "skipped_dates": {},
   "failed_columns": {},
   "admitted_this_run": {
-    "미국증시/Dow Jones": [
-      "2026-09-29"
-    ],
-    "미국증시/Nasdaq": [
-      "2026-09-29"
-    ],
-    "미국증시/S&P 500": [
-      "2026-09-29"
-    ],
-    "미국증시/Phili 반도체": [
-      "2026-09-29"
-    ],
-    "미국증시/Russell 2000": [
-      "2026-09-29"
-    ],
-    "미국증시/VIX": [
-      "2026-09-29"
-    ],
-    "해외주요국증시/유로스톡스50": [
-      "2026-09-29"
-    ],
-    "해외주요국증시/영국": [
-      "2026-09-29"
-    ],
-    "환율/달러/원": [
-      "2026-09-29"
-    ],
-    "환율/유로/원": [
-      "2026-09-29"
-    ],
-    "환율/엔/원": [
-      "2026-09-29"
-    ],
-    "환율/유로/달러": [
-      "2026-09-29"
-    ],
-    "환율/달러/엔": [
-      "2026-09-29"
-    ],
-    "원자재/WTI": [
-      "2026-09-29"
-    ],
-    "원자재/Brent": [
-      "2026-09-29"
-    ],
-    "원자재/천연가스": [
-      "2026-09-29"
-    ],
-    "원자재/Gold": [
-      "2026-09-29"
-    ],
-    "원자재/구리": [
-      "2026-09-29"
-    ]
-  },
-  "held_intraday": {
     "미국채/US 2Y": [
       "2026-09-29"
     ],
@@ -1084,8 +1033,26 @@
       "2026-09-29"
     ]
   },
+  "held_intraday": {
+    "해외주요국증시/Nikkei 225": [
+      "2026-09-30"
+    ],
+    "환율/달러/원": [
+      "2026-09-30"
+    ],
+    "환율/유로/원": [
+      "2026-09-30"
+    ],
+    "환율/엔/원": [
+      "2026-09-30"
+    ],
+    "환율/유로/달러": [
+      "2026-09-30"
+    ],
+    "환율/달러/엔": [
+      "2026-09-30"
+    ]
+  },
   "warnings": [],
-  "errors": [
-    "국내채권: ConnectTimeout: HTTPSConnectionPool(host='ecos.bok.or.kr', port=443): Max retries exceeded with url: /api/StatisticItemList/0WU63YLA0KN7OB3XAKTV/json/kr/1/500/817Y002 (Caused by ConnectTimeoutError(<HTTPSConnection(host='ecos.bok.or.kr', port=443) at 0x7fc2945e0ad0>, 'Connection to ecos.bok.or.kr timed out. (connect timeout=30)'))"
-  ]
+  "errors": []
 }
