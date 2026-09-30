@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-01T00:06:06.837189+09:00",
+  "generated_at": "2026-10-01T06:28:57.546380+09:00",
   "target_date": "2026-09-29",
   "backfill_business_days": 10,
   "sources": {
@@ -1015,35 +1015,6 @@
   "skipped_dates": {},
   "failed_columns": {},
   "admitted_this_run": {
-    "해외주요국증시/상해종합": [
-      "2026-09-30"
-    ],
-    "해외주요국증시/항셍": [
-      "2026-09-30"
-    ],
-    "해외주요국증시/홍콩 H": [
-      "2026-09-30"
-    ],
-    "해외주요국증시/대만": [
-      "2026-09-30"
-    ],
-    "국내증시/KOSPI": [
-      "2026-09-30"
-    ],
-    "국내증시/KOSPI 200": [
-      "2026-09-30"
-    ],
-    "국내증시/KOSDAQ": [
-      "2026-09-30"
-    ],
-    "국내증시/KOSDAQ 150": [
-      "2026-09-30"
-    ],
-    "국내증시/K밸류업": [
-      "2026-09-30"
-    ]
-  },
-  "held_intraday": {
     "미국증시/Dow Jones": [
       "2026-09-30"
     ],
@@ -1099,8 +1070,22 @@
       "2026-09-30"
     ]
   },
+  "held_intraday": {
+    "미국채/US 2Y": [
+      "2026-09-30"
+    ],
+    "미국채/US 5Y": [
+      "2026-09-30"
+    ],
+    "미국채/US 10Y": [
+      "2026-09-30"
+    ],
+    "미국채/US 30Y": [
+      "2026-09-30"
+    ]
+  },
   "warnings": [],
   "errors": [
-    "국내채권: ConnectTimeout: HTTPSConnectionPool(host='ecos.bok.or.kr', port=443): Max retries exceeded with url: /api/StatisticItemList/0WU63YLA0KN7OB3XAKTV/json/kr/1/500/817Y002 (Caused by ConnectTimeoutError(<HTTPSConnection(host='ecos.bok.or.kr', port=443) at 0x7f2f84be36d0>, 'Connection to ecos.bok.or.kr timed out. (connect timeout=30)'))"
+    "국내채권: ConnectTimeout: HTTPSConnectionPool(host='ecos.bok.or.kr', port=443): Max retries exceeded with url: /api/StatisticItemList/0WU63YLA0KN7OB3XAKTV/json/kr/1/500/817Y002 (Caused by ConnectTimeoutError(<HTTPSConnection(host='ecos.bok.or.kr', port=443) at 0x7fdceb8f6210>, 'Connection to ecos.bok.or.kr timed out. (connect timeout=30)'))"
   ]
 }
