@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T11:32:45.721432+09:00",
+  "generated_at": "2026-10-02T23:53:04.882790+09:00",
   "target_date": "2026-10-01",
   "backfill_business_days": 10,
   "sources": {
@@ -21,11 +21,6 @@
     "국내증시/KOSDAQ": "KRX 코스닥 (2001)",
     "국내증시/KOSDAQ 150": "KRX 코스닥 150 (2203)",
     "국내증시/K밸류업": "KRX 코리아 밸류업 지수 (5302)",
-    "국내채권/KR 2Y": "ECOS 817Y002 국고채(2년)",
-    "국내채권/KR 3Y": "ECOS 817Y002 국고채(3년)",
-    "국내채권/KR 10Y": "ECOS 817Y002 국고채(10년)",
-    "국내채권/SB 3Y(AA-)": "ECOS 817Y002 회사채(3년, AA-)",
-    "국내채권/CP91": "ECOS 817Y002 CP(91일)",
     "미국채/US 2Y": "U.S. Treasury daily yield curve CSV",
     "미국채/US 5Y": "U.S. Treasury daily yield curve CSV",
     "미국채/US 10Y": "U.S. Treasury daily yield curve CSV",
@@ -59,7 +54,7 @@
             "Nasdaq": 26871.6,
             "S&P 500": 7666.45,
             "Phili 반도체": 12829.0,
-            "Russell 2000": 2806.62,
+            "Russell 2000": 2806.63,
             "VIX": 16.39
           },
           "carried_forward": false,
@@ -883,11 +878,11 @@
         {
           "date": "2026-10-01",
           "values": {
-            "WTI": 92.92,
-            "Brent": 102.52,
-            "천연가스": 2.931,
-            "Gold": 4186.4,
-            "구리": 6.539
+            "WTI": 92.87,
+            "Brent": 102.31,
+            "천연가스": 2.967,
+            "Gold": 4202.3,
+            "구리": 6.482
           },
           "carried_forward": false,
           "carried_columns": []
@@ -1009,8 +1004,7 @@
     ]
   },
   "failed_columns": {},
-  "admitted_this_run": {},
-  "held_intraday": {
+  "admitted_this_run": {
     "해외주요국증시/항셍": [
       "2026-10-02"
     ],
@@ -1037,6 +1031,32 @@
     ],
     "국내증시/K밸류업": [
       "2026-10-02"
+    ]
+  },
+  "held_intraday": {
+    "미국증시/Dow Jones": [
+      "2026-10-02"
+    ],
+    "미국증시/Nasdaq": [
+      "2026-10-02"
+    ],
+    "미국증시/S&P 500": [
+      "2026-10-02"
+    ],
+    "미국증시/Phili 반도체": [
+      "2026-10-02"
+    ],
+    "미국증시/Russell 2000": [
+      "2026-10-02"
+    ],
+    "미국증시/VIX": [
+      "2026-10-02"
+    ],
+    "해외주요국증시/유로스톡스50": [
+      "2026-10-02"
+    ],
+    "해외주요국증시/영국": [
+      "2026-10-02"
     ],
     "환율/달러/원": [
       "2026-10-02"
@@ -1052,10 +1072,27 @@
     ],
     "환율/달러/엔": [
       "2026-10-02"
+    ],
+    "원자재/WTI": [
+      "2026-10-02"
+    ],
+    "원자재/Brent": [
+      "2026-10-02"
+    ],
+    "원자재/천연가스": [
+      "2026-10-02"
+    ],
+    "원자재/Gold": [
+      "2026-10-02"
+    ],
+    "원자재/구리": [
+      "2026-10-02"
     ]
   },
   "warnings": [
     "해외주요국증시: 목표일 2026-10-01 아직 미수신 — 행 보류. 다음 실행에서 채워지면 그때 게시된다."
   ],
-  "errors": []
+  "errors": [
+    "국내채권: ConnectTimeout: HTTPSConnectionPool(host='ecos.bok.or.kr', port=443): Max retries exceeded with url: /api/StatisticItemList/0WU63YLA0KN7OB3XAKTV/json/kr/1/500/817Y002 (Caused by ConnectTimeoutError(<HTTPSConnection(host='ecos.bok.or.kr', port=443) at 0x7fedcc1e3610>, 'Connection to ecos.bok.or.kr timed out. (connect timeout=30)'))"
+  ]
 }
