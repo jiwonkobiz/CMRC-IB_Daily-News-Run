@@ -21,15 +21,33 @@ CMRC IB Daily News Run - 전일 종가 수집기
   당일 아시아 종가를 잡아 두는 것 자체가 불가능하다. 지금은 시장별 마감 시각을
   두고, 그 시각을 지난 세션의 바만 받아들인다. 마감 전 값은 장중 시세이므로 버린다.
 
-휴장 vs 미수신 판정
-  거래소 캘린더 없이 구분한다. 컬럼 c 의 날짜 d 에 값이 없을 때,
-    - store 에 d 보다 나중 날짜의 값이 있으면 -> 소스가 d 를 지나갔다는 뜻이므로
-      진짜 휴장. 직전 거래일 값을 이어 적고 carried_columns 에 기록한다.
-    - d 이후 값이 하나도 없으면 -> 아직 안 들어온 것. 이 경우 그 날짜 행 자체를
-      게시하지 않는다.
-  이월값이 시트에 한 번 박히면 Office Script 의 "시트 최신 날짜보다 새 행만 삽입"
-  규칙 때문에 나중에 진짜 값이 와도 영영 못 들어간다. 그래서 미수신은 이월이 아니라
-  보류가 맞다.
+휴장 vs 미수신 판정 (2026-10 개정)
+  컬럼 c 의 날짜 d 에 값이 없을 때 두 가지 근거로 휴장을 판정한다.
+
+  (1) store 근거 — store 에 d 보다 나중 날짜의 값이 있으면 소스가 d 를 지나갔다는
+      뜻이므로 진짜 휴장이다. 직전 거래일 값을 이어 적는다.
+  (2) 캘린더 근거 — d 이후 값이 아직 없더라도 거래소 캘린더(exchange_calendars)가
+      d 를 휴장이라고 하면 기다릴 값이 없으므로 바로 이월한다.
+
+  예전에는 (1)만 있었다. 그러면 목표일 당일이 휴장인 경우 "d 이후 값"이 생길
+  때까지 행이 보류된다. 실제로 국경절(10/1~10/7) 동안 상해종합 하나 때문에
+  해외주요국증시 행이 일주일 내내 안 나갔고, 개천절 대체휴일(10/5)에는 국내증시와
+  국내채권 행이 통째로 빠졌다. (2)는 이 구멍을 메운다.
+
+  (2)에는 안전장치가 셋 있다. 이월값이 시트에 한 번 박히면 Office Script 의
+  "시트 최신 날짜보다 새 행만 삽입" 규칙 때문에 나중에 고칠 수 없기 때문이다.
+    - 이번 실행에서 그 표의 수집이 성공했을 때만 적용한다. 소스가 죽은 날에
+      캘린더만 믿고 이월하지 않는다.
+    - 캘린더상 직전 거래일의 값이 store 에 실제로 있어야 한다. 없으면 더 옛날
+      값으로 건너뛰지 않고 보류한다.
+    - 캘린더가 판정하지 못하는 날(라이브러리 범위 밖, 로드 실패)은 휴장으로
+      치지 않는다. (1)로 떨어져 예전처럼 동작한다.
+  캘린더가 "개장"이라고 했는데 실제로는 쉰 날(선거일, 임시공휴일, 태풍 휴장)도
+  (1)로 떨어지므로 하루 늦게 채워질 뿐 틀린 값은 안 들어간다. 그 하루도 기다리기
+  싫으면 EXTRA_HOLIDAYS 환경변수로 직접 알려준다.
+
+  d 에 값이 없고 (1)(2) 어느 쪽도 아니면 미수신이다. 이 경우 그 날짜 행 자체를
+  게시하지 않는다. 미수신은 이월이 아니라 보류가 맞다.
 
 이름 매칭 정책 (2026-09 개정)
   예전에는 ECOS 항목명과 KRX 지수명을 "완전일치 실패 시 부분일치"로 찾았다.
@@ -70,17 +88,25 @@ CMRC IB Daily News Run - 전일 종가 수집기
 
 경제지표 5개 표(CPI/PPI/PCE/PMI/NFP)는 월간 발표라 수기 유지한다.
 
+필요한 패키지
+  yfinance, pykrx, requests, exchange_calendars
+  exchange_calendars 가 없으면 경고만 남기고 캘린더 근거 없이(예전 방식으로) 돈다.
+  중국 휴장일은 매년 말에 다음 해 분이 발표되므로 버전을 고정하지 말 것.
+
 필요한 시크릿
   ECOS_API_KEY   한국은행 ECOS 오픈API 인증키
   KRX_ID/KRX_PW  KRX 데이터 마켓플레이스 계정. 2025-12-27 회원제 전환 이후
                  pykrx 가 이 환경변수를 직접 읽어 로그인한다.
 
-선택 환경변수 (항목명이 바뀌었을 때의 비상 고정용)
+선택 환경변수
   ECOS_ITEM_<KEY>   해당 컬럼의 ECOS ITEM_CODE 를 직접 고정한다.
                     예: ECOS_ITEM_CP91=010502001
                     고정해도 이름 검증은 그대로 수행한다.
   KRX_INDEX_<KEY>   해당 컬럼의 KRX 지수 코드를 직접 고정한다.
                     예: KRX_INDEX_KVALUEUP=1Q01
+  EXTRA_HOLIDAYS    캘린더가 모르는 휴장일을 직접 알려준다. "시장:날짜" 를 쉼표로
+                    잇는다. 시장 키는 MARKETS 의 키와 같다.
+                    예: EXTRA_HOLIDAYS=KR:2027-03-03,TW:2026-07-24
 
 종료 코드
   0  정상
@@ -127,6 +153,17 @@ MARKETS: dict[str, tuple[int, time]] = {
     "FX":     (1, time(6, 0)),    # 뉴욕 마감 기준
     "COMMO":  (1, time(6, 0)),    # NYMEX/COMEX 정산
 }
+
+# 시장 -> exchange_calendars 캘린더 코드. 목표일 당일의 휴장 판정에 쓴다.
+#   EU      유로스톡스50 은 유로넥스트 파리와 같은 날 쉰다(12/24, 12/31 은 연다).
+#   USBOND  NYSE 휴장일 + 채권시장만 쉬는 날(_us_bond_only_holiday).
+#   COMMO   NYMEX/COMEX 는 미국 공휴일에 정산가를 내지 않는다.
+#   FX      거래소가 없다. 평일은 전부 열고 1/1, 12/25 만 닫는 것으로 본다.
+MARKET_CALENDAR: dict[str, str] = {
+    "EU": "XPAR", "UK": "XLON", "CN": "XSHG", "HK": "XHKG", "JP": "XTKS",
+    "TW": "XTAI", "KR": "XKRX", "US": "XNYS", "USBOND": "XNYS", "COMMO": "XNYS",
+}
+FX_FIXED_CLOSED = {(1, 1), (12, 25)}
 
 # 표별 컬럼 순서, 소수점 자릿수, 소속 시장.
 # 엑셀 표 헤더와 컬럼 문자열이 정확히 일치해야 한다.
@@ -180,6 +217,7 @@ warnings: list[str] = []
 notes: dict[str, str] = {}      # 컬럼별 실제 사용 소스 기록
 admitted: dict[str, list[str]] = {}   # 이번 실행에 새로 적립된 (표/컬럼) -> 날짜들
 held: dict[str, list[str]] = {}       # 장중이라 보류한 (표/컬럼) -> 날짜들
+calendar_carried: dict[str, list[str]] = {}  # 캘린더 근거로 이월한 (표/컬럼) -> 날짜들
 
 # 구조적으로 죽은 컬럼: {표: {컬럼: 사유}}.
 # 항목 확정 실패처럼 다음 실행에서도 저절로 낫지 않는 것만 넣는다. 이 컬럼은
@@ -230,6 +268,134 @@ def session_final(market: str, d: date) -> datetime:
     """market 의 d 세션이 확정되는 시각(KST)."""
     off, t = MARKETS[market]
     return datetime.combine(d + timedelta(days=off), t, tzinfo=KST)
+
+
+# ---------------------------------------------------------------------------
+# 거래소 캘린더 - 목표일 당일의 휴장 판정
+# ---------------------------------------------------------------------------
+#
+# 판정은 세 값이다. True=휴장, False=개장, None=모름.
+# "모름"을 휴장으로 치면 안 된다. 틀린 이월값은 시트에 굳지만, 보류는 다음
+# 실행에서 저절로 풀린다. 그래서 애매하면 전부 None 이나 False 쪽으로 보낸다.
+
+_calendars: dict[str, object] = {}
+_warned: set[str] = set()
+_extra_holidays_cache: dict[str, set[date]] | None = None
+
+
+def _warn_once(key: str, msg: str) -> None:
+    if key not in _warned:
+        _warned.add(key)
+        warnings.append(msg)
+
+
+def _extra_holidays() -> dict[str, set[date]]:
+    """EXTRA_HOLIDAYS 환경변수 파싱. 형식: 'KR:2027-03-03,TW:2026-07-24'."""
+    global _extra_holidays_cache
+    if _extra_holidays_cache is not None:
+        return _extra_holidays_cache
+    out: dict[str, set[date]] = {}
+    for token in os.environ.get("EXTRA_HOLIDAYS", "").split(","):
+        token = token.strip()
+        if not token:
+            continue
+        market, _, raw = token.partition(":")
+        market = market.strip().upper()
+        try:
+            if market not in MARKETS:
+                raise ValueError(f"모르는 시장 '{market}'")
+            out.setdefault(market, set()).add(date.fromisoformat(raw.strip()))
+        except ValueError as exc:
+            warnings.append(f"EXTRA_HOLIDAYS 항목 '{token}' 무시함: {exc}")
+    _extra_holidays_cache = out
+    return out
+
+
+def _calendar(code: str):
+    """exchange_calendars 캘린더. 로드에 실패하면 None (경고 1회)."""
+    if code in _calendars:
+        return _calendars[code]
+    cal = None
+    try:
+        import exchange_calendars as xc
+
+        start = datetime.now(KST).date() - timedelta(days=FETCH_CALENDAR_DAYS + 30)
+        cal = xc.get_calendar(code, start=start.isoformat())
+    except ImportError:
+        _warn_once(
+            "xc-import",
+            "exchange_calendars 미설치 — 목표일 당일 휴장을 판정할 수 없어 "
+            "해당 행은 다음 거래일 값이 들어올 때까지 보류된다. "
+            "requirements 에 exchange_calendars 를 추가할 것.",
+        )
+    except Exception as exc:
+        # 대표적으로 라이브러리가 아는 범위가 끝난 경우(중국은 연 단위로 갱신).
+        _warn_once(
+            f"xc-load-{code}",
+            f"거래소 캘린더 {code} 로드 실패 ({type(exc).__name__}: {exc}) — "
+            f"exchange_calendars 를 최신 버전으로 올릴 것. 그동안 이 시장의 "
+            f"당일 휴장은 판정하지 않는다.",
+        )
+    _calendars[code] = cal
+    return cal
+
+
+def _us_bond_only_holiday(d: date) -> bool:
+    """NYSE 는 열지만 미국 채권시장은 쉬는 날. 재무부 수익률곡선이 안 나온다."""
+    if d.month == 10 and d.weekday() == 0 and 8 <= d.day <= 14:
+        return True                      # 콜럼버스데이 (10월 둘째 월요일)
+    if d.month == 11 and d.day == 11 and d.weekday() < 5:
+        return True                      # 재향군인의 날
+    if d.month == 11 and d.day == 12 and d.weekday() == 0:
+        return True                      # 11/11 이 일요일이면 월요일 대체
+    return False
+
+
+def market_closed(market: str, d: date) -> bool | None:
+    """d 에 market 이 쉬었는가. True=휴장, False=개장, None=판정 불가."""
+    if d in _extra_holidays().get(market, ()):
+        return True
+    if d.weekday() >= 5:
+        return True
+    if market == "FX":
+        return (d.month, d.day) in FX_FIXED_CLOSED
+    if market == "USBOND" and _us_bond_only_holiday(d):
+        return True
+    code = MARKET_CALENDAR.get(market)
+    if code is None:
+        return None
+    cal = _calendar(code)
+    if cal is None:
+        return None
+    if not (cal.first_session.date() <= d <= cal.last_session.date()):
+        _warn_once(
+            f"xc-range-{code}",
+            f"거래소 캘린더 {code} 가 {d.isoformat()} 를 모른다 "
+            f"(수록 범위 ~{cal.last_session.date().isoformat()}) — "
+            f"exchange_calendars 를 최신 버전으로 올릴 것.",
+        )
+        return None
+    try:
+        return not cal.is_session(d.isoformat())
+    except Exception as exc:
+        _warn_once(
+            f"xc-query-{code}",
+            f"거래소 캘린더 {code} 조회 실패: {type(exc).__name__}: {exc}",
+        )
+        return None
+
+
+def prev_session(market: str, d: date) -> date | None:
+    """캘린더상 d 직전 거래일. 중간에 판정 불가한 날이 있으면 None."""
+    p = d
+    for _ in range(FETCH_CALENDAR_DAYS):
+        p -= timedelta(days=1)
+        closed = market_closed(market, p)
+        if closed is None:
+            return None
+        if not closed:
+            return p
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -723,10 +889,15 @@ JOBS = [
 ]
 
 EXACT, CARRIED, MISSING, EMPTY = "exact", "carried", "missing", "empty"
+CARRIED_CAL = "carried_calendar"   # 캘린더 근거 이월. 게시상으로는 CARRIED 와 같다.
 
 
-def resolve_cell(points: dict[date, float], d: date):
-    """(값, 상태, 실제 일자). 휴장과 미수신을 store 내용만으로 구분한다."""
+def resolve_cell(points: dict[date, float], d: date,
+                 market: str | None = None, use_calendar: bool = False):
+    """(값, 상태, 실제 일자). 휴장과 미수신을 구분한다.
+
+    use_calendar 는 이번 실행에서 이 표의 수집이 성공했을 때만 켠다.
+    """
     if not points:
         return None, EMPTY, None          # 컬럼 자체가 비어 있음 (수집 실패)
     if d in points:
@@ -737,12 +908,20 @@ def resolve_cell(points: dict[date, float], d: date):
             e = max(earlier)
             return points[e], CARRIED, e   # 소스가 d 를 지나감 -> 진짜 휴장
         return None, EMPTY, None
+    # d 이후 값이 아직 없다. 캘린더가 휴장이라고 하면 기다릴 값이 없으므로
+    # 직전 거래일 값을 이월한다. 그 직전 거래일 값이 store 에 없으면 더 옛날
+    # 값으로 건너뛰지 않고 보류한다.
+    if use_calendar and market and market_closed(market, d) is True:
+        e = prev_session(market, d)
+        if e is not None and e in points:
+            return points[e], CARRIED_CAL, e
     return None, MISSING, None             # d 이후가 없음 -> 아직 안 들어옴
 
 
 def build_rows(table: str, store_table: dict[str, dict[date, float]],
-               cal_dates: list[date]) -> tuple[list[dict], list[str]]:
+               cal_dates: list[date], use_calendar: bool = False) -> tuple[list[dict], list[str]]:
     digits = TABLE_DIGITS[table]
+    markets = TABLE_MARKET[table]
     anchor = TABLE_ANCHOR.get(table)
     dead = set(failed_columns.get(table, {}))
     rows: list[dict] = []
@@ -759,7 +938,9 @@ def build_rows(table: str, store_table: dict[str, dict[date, float]],
         carried_cols: list[str] = []
 
         if anchor:
-            _, status, eff = resolve_cell(store_table.get(anchor, {}), d)
+            _, status, eff = resolve_cell(
+                store_table.get(anchor, {}), d, markets[anchor], use_calendar
+            )
             if status == MISSING:
                 skipped.append(d.isoformat())
                 continue
@@ -770,21 +951,30 @@ def build_rows(table: str, store_table: dict[str, dict[date, float]],
             for col in TABLE_COLUMNS[table]:
                 v = store_table.get(col, {}).get(eff)
                 values[col] = round(v, digits[col]) if v is not None else None
-            if status == CARRIED:
+            if status in (CARRIED, CARRIED_CAL):
                 carried_cols = [c for c in TABLE_COLUMNS[table] if values[c] is not None]
+            if status == CARRIED_CAL:
+                calendar_carried.setdefault(f"{table}/{anchor}", []).append(d.isoformat())
         else:
             incomplete = False
+            by_calendar: list[str] = []
             for col in TABLE_COLUMNS[table]:
-                v, status, _ = resolve_cell(store_table.get(col, {}), d)
+                v, status, _ = resolve_cell(
+                    store_table.get(col, {}), d, markets[col], use_calendar
+                )
                 if status == MISSING:
                     incomplete = True
                     break
                 values[col] = round(v, digits[col]) if v is not None else None
-                if status == CARRIED:
+                if status in (CARRIED, CARRIED_CAL):
                     carried_cols.append(col)
+                if status == CARRIED_CAL:
+                    by_calendar.append(col)
             if incomplete:
                 skipped.append(d.isoformat())
                 continue
+            for col in by_calendar:
+                calendar_carried.setdefault(f"{table}/{col}", []).append(d.isoformat())
 
         rows.append({
             "date": d.isoformat(),
@@ -841,7 +1031,11 @@ def main() -> int:
         store_table = store.get(name)
         if not store_table:
             continue
-        rows, skipped = build_rows(name, store_table, cal_dates)
+        # 캘린더 근거 이월은 이번 실행에서 수집에 성공한 표에만 적용한다.
+        # 수집이 실패한 표는 "값이 없다"는 것이 휴장 때문인지 알 수 없다.
+        rows, skipped = build_rows(
+            name, store_table, cal_dates, use_calendar=name in fetched_tables
+        )
         if skipped:
             skipped_all[name] = skipped
         if not rows:
@@ -870,6 +1064,7 @@ def main() -> int:
         "failed_columns": failed_columns,
         "admitted_this_run": admitted,
         "held_intraday": held,
+        "carried_by_calendar": calendar_carried,
         "warnings": warnings,
         "errors": errors,
     }
@@ -885,6 +1080,10 @@ def main() -> int:
         log("장중이라 보류:")
         for k, v in held.items():
             log(f"  ~ {k}: {', '.join(sorted(v))}")
+    if calendar_carried:
+        log("캘린더상 휴장이라 직전 거래일 값으로 이월:")
+        for k, v in calendar_carried.items():
+            log(f"  = {k}: {', '.join(sorted(v))}")
 
     if failed_columns:
         log("죽은 컬럼 (N/A 로 게시):")
