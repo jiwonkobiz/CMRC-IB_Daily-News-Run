@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T00:41:00.928117+09:00",
+  "generated_at": "2026-10-08T07:07:44.157276+09:00",
   "target_date": "2026-10-06",
   "backfill_business_days": 10,
   "sources": {
@@ -60,7 +60,7 @@
             "S&P 500": 7818.93,
             "Phili 반도체": 13217.82,
             "Russell 2000": 2830.3,
-            "VIX": 15.01
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -73,7 +73,7 @@
             "S&P 500": 7773.95,
             "Phili 반도체": 13172.74,
             "Russell 2000": 2847.14,
-            "VIX": 15.52
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -86,7 +86,7 @@
             "S&P 500": 7722.72,
             "Phili 반도체": 13136.67,
             "Russell 2000": 2832.9,
-            "VIX": 15.31
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -99,7 +99,7 @@
             "S&P 500": 7666.45,
             "Phili 반도체": 12829.0,
             "Russell 2000": 2806.63,
-            "VIX": 16.39
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -112,7 +112,7 @@
             "S&P 500": 7651.54,
             "Phili 반도체": 12628.62,
             "Russell 2000": 2796.86,
-            "VIX": 16.34
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -125,7 +125,7 @@
             "S&P 500": 7670.84,
             "Phili 반도체": 12629.16,
             "Russell 2000": 2807.92,
-            "VIX": 16.04
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -138,7 +138,7 @@
             "S&P 500": 7683.69,
             "Phili 반도체": 12465.24,
             "Russell 2000": 2817.91,
-            "VIX": 16.07
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -151,7 +151,7 @@
             "S&P 500": 7743.41,
             "Phili 반도체": 12668.93,
             "Russell 2000": 2837.55,
-            "VIX": 14.87
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -164,7 +164,7 @@
             "S&P 500": 7704.13,
             "Phili 반도체": 12492.54,
             "Russell 2000": 2835.57,
-            "VIX": 15.67
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -177,7 +177,7 @@
             "S&P 500": 7706.03,
             "Phili 반도체": 12534.28,
             "Russell 2000": 2838.66,
-            "VIX": 15.18
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": []
@@ -1036,49 +1036,12 @@
     }
   },
   "skipped_dates": {},
-  "failed_columns": {},
-  "admitted_this_run": {
-    "해외주요국증시/항셍": [
-      "2026-10-07"
-    ],
-    "해외주요국증시/홍콩 H": [
-      "2026-10-07"
-    ],
-    "해외주요국증시/대만": [
-      "2026-10-07"
-    ],
-    "국내증시/KOSPI": [
-      "2026-10-07"
-    ],
-    "국내증시/KOSPI 200": [
-      "2026-10-07"
-    ],
-    "국내증시/KOSDAQ": [
-      "2026-10-07"
-    ],
-    "국내증시/KOSDAQ 150": [
-      "2026-10-07"
-    ],
-    "국내증시/K밸류업": [
-      "2026-10-07"
-    ],
-    "국내채권/KR 2Y": [
-      "2026-10-07"
-    ],
-    "국내채권/KR 3Y": [
-      "2026-10-07"
-    ],
-    "국내채권/KR 10Y": [
-      "2026-10-07"
-    ],
-    "국내채권/SB 3Y(AA-)": [
-      "2026-10-07"
-    ],
-    "국내채권/CP91": [
-      "2026-10-07"
-    ]
+  "failed_columns": {
+    "미국증시": {
+      "VIX": "최근 40일 데이터 없음 (^VIX)"
+    }
   },
-  "held_intraday": {
+  "admitted_this_run": {
     "미국증시/Dow Jones": [
       "2026-10-07"
     ],
@@ -1092,12 +1055,6 @@
       "2026-10-07"
     ],
     "미국증시/Russell 2000": [
-      "2026-10-07"
-    ],
-    "미국증시/VIX": [
-      "2026-10-07"
-    ],
-    "해외주요국증시/유로스톡스50": [
       "2026-10-07"
     ],
     "해외주요국증시/영국": [
@@ -1134,6 +1091,20 @@
       "2026-10-07"
     ]
   },
+  "held_intraday": {
+    "미국채/US 2Y": [
+      "2026-10-07"
+    ],
+    "미국채/US 5Y": [
+      "2026-10-07"
+    ],
+    "미국채/US 10Y": [
+      "2026-10-07"
+    ],
+    "미국채/US 30Y": [
+      "2026-10-07"
+    ]
+  },
   "carried_by_calendar": {
     "해외주요국증시/상해종합": [
       "2026-10-01",
@@ -1143,5 +1114,7 @@
     ]
   },
   "warnings": [],
-  "errors": []
+  "errors": [
+    "미국증시/VIX: 최근 40일 데이터 없음 (^VIX)"
+  ]
 }
