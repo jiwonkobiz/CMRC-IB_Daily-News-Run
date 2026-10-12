@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-13T08:50:07.014553+09:00",
+  "generated_at": "2026-10-13T08:59:12.400406+09:00",
   "target_date": "2026-10-12",
   "backfill_business_days": 10,
   "sources": {
@@ -879,11 +879,11 @@
         {
           "date": "2026-10-12",
           "values": {
-            "WTI": 93.24,
-            "Brent": 105.99,
+            "WTI": 93.16,
+            "Brent": 105.95,
             "천연가스": 3.18,
-            "Gold": 4199.3,
-            "구리": 6.7575
+            "Gold": 4197.0,
+            "구리": 6.755
           },
           "carried_forward": false,
           "carried_columns": []
@@ -1008,11 +1008,7 @@
     ]
   },
   "failed_columns": {},
-  "admitted_this_run": {
-    "미국증시/Phili 반도체": [
-      "2026-10-12"
-    ]
-  },
+  "admitted_this_run": {},
   "held_intraday": {
     "환율/달러/원": [
       "2026-10-13"
