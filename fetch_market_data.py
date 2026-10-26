@@ -3,7 +3,8 @@ CMRC IB Daily News Run - 전일 종가 수집기
 
 하루 여러 번(장 마감 직후) 실행되어 시세를 data/store.json 에 누적하고,
 누적분에서 data/latest.json 을 조립해 게시한다. Office Script 가 latest.json 을
-읽어 Data 시트 표 7개에 행을 삽입한다.
+읽어 Data 시트 표 7개를 날짜 기준으로 맞춘다(없는 날짜는 삽입, 있는 날짜는
+값이 다른 칸만 고침).
 
 왜 누적 저장인가
   Yahoo 는 "가장 최근에 끝난 세션"의 확정 일봉(EOD)을 한동안 내려주지 않는다.
@@ -15,6 +16,11 @@ CMRC IB Daily News Run - 전일 종가 수집기
   그래서 "아침에 한 번 긁어서 전일 종가를 얻는다"는 전제 자체가 성립하지 않는다.
   각 시장이 닫힌 직후에 값을 잡아 store.json 에 적립해 두고, 아침 실행은 적립분을
   조립만 한다. store 는 병합 전용이며 기존 값을 지우지 않는다.
+
+  주의: 목표일 다음 날이 그 시장의 휴장일이면 목표일 세션이 계속 "가장 최근에
+  끝난 세션"으로 남아 Yahoo 가 더 오래 비워 둔다(예: 대만 2026-10-23, 다음
+  거래일 10-26 이 광복절 대체휴일). 이런 날은 마감 직후 적립에 실패하면 다음
+  거래일이 열릴 때까지 그 칸이 대기로 남는다.
 
 세션 확정 판정 (MARKETS)
   예전에는 "target 보다 최신인 데이터는 전부 폐기"했는데, 이러면 17:30 실행에서
@@ -34,20 +40,20 @@ CMRC IB Daily News Run - 전일 종가 수집기
   해외주요국증시 행이 일주일 내내 안 나갔고, 개천절 대체휴일(10/5)에는 국내증시와
   국내채권 행이 통째로 빠졌다. (2)는 이 구멍을 메운다.
 
-  (2)에는 안전장치가 셋 있다. 이월값이 시트에 한 번 박히면 Office Script 의
-  "시트 최신 날짜보다 새 행만 삽입" 규칙 때문에 나중에 고칠 수 없기 때문이다.
+  (2)에는 안전장치가 셋 있다. Office Script 가 최근 10영업일 안에서는 나중에
+  정정해 주지만, 그 사이 뉴스런에는 틀린 이월값이 나가기 때문이다.
     - 이번 실행에서 그 표의 수집이 성공했을 때만 적용한다. 소스가 죽은 날에
       캘린더만 믿고 이월하지 않는다.
     - 캘린더상 직전 거래일의 값이 store 에 실제로 있어야 한다. 없으면 더 옛날
-      값으로 건너뛰지 않고 보류한다.
+      값으로 건너뛰지 않고 미수신으로 둔다.
     - 캘린더가 판정하지 못하는 날(라이브러리 범위 밖, 로드 실패)은 휴장으로
       치지 않는다. (1)로 떨어져 예전처럼 동작한다.
   캘린더가 "개장"이라고 했는데 실제로는 쉰 날(선거일, 임시공휴일, 태풍 휴장)도
   (1)로 떨어지므로 하루 늦게 채워질 뿐 틀린 값은 안 들어간다. 그 하루도 기다리기
   싫으면 EXTRA_HOLIDAYS 환경변수로 직접 알려준다.
 
-  d 에 값이 없고 (1)(2) 어느 쪽도 아니면 미수신이다. 이 경우 그 날짜 행 자체를
-  게시하지 않는다. 미수신은 이월이 아니라 보류가 맞다.
+  d 에 값이 없고 (1)(2) 어느 쪽도 아니면 미수신이다. 미수신 칸은 이월하지 않는다.
+  게시 방식은 아래 "행 구성"을 따른다.
 
 이름 매칭 정책 (2026-09 개정)
   예전에는 ECOS 항목명과 KRX 지수명을 "완전일치 실패 시 부분일치"로 찾았다.
@@ -72,19 +78,23 @@ CMRC IB Daily News Run - 전일 종가 수집기
   죽은 컬럼은 store 에 남은 과거 값을 이월하지 않는다. 이월하면 오늘 수집이
   실패했다는 사실이 옛날 숫자로 가려진다.
 
-  "아직 안 들어온 값"(MISSING)은 죽은 것이 아니다. 기다리면 오므로 행 자체를
-  보류한다. 여기에 N/A 를 박으면 나중에 진짜 값이 와도 Office Script 의
-  "시트 최신 날짜보다 새 행만 삽입" 규칙 때문에 영영 못 들어간다.
+  "아직 안 들어온 값"(MISSING)은 죽은 것이 아니다. 기다리면 온다. 그 칸은
+  null 로 비우고 행의 pending_columns 에 적는다(대기 칸). Office Script 가
+  날짜 기준으로 덮어쓰므로 다음 실행에서 값이 들어오면 그 칸만 채워진다.
+  대기 칸에 N/A 를 찍지 않는 이유는 N/A 가 "수집 실패"라는 다른 뜻이기 때문이다.
 
 행 구성
   - 단일 시장 표(미국증시/국내증시/미국채/국내채권)는 기준 컬럼 하나로 개장 여부를
     판정해 행 전체가 같은 날짜에서 온 값이 되게 한다. 노동절에 VIX 만 유령 값이
-    들어오는 식의 혼합 행을 막는다.
+    들어오는 식의 혼합 행을 막는다. 앵커가 미수신이면 행을 보류한다.
   - 복수 시장 표(해외주요국증시/환율/원자재)는 컬럼별로 판정한다. 영국만 쉬고
     나머지는 여는 날을 처리하려면 이쪽이 맞다.
+    일부 컬럼만 미수신이면 그 칸만 대기로 비우고 행을 게시한다(2026-10 개정).
+    예전에는 대만 하나가 안 들어와 해외주요국증시 행 전체가 보류됐다.
+    살아 있는 컬럼이 전부 미수신일 때만 행을 보류한다.
   - 행 날짜는 모든 표가 한국 평일(월~금) 기준이며, 매 실행마다 최근 평일
     BACKFILL_BUSINESS_DAYS 개분 중 게시 가능한 것만 내보낸다. 시트에 이미 있는
-    날짜를 거르는 일은 Office Script 쪽에서 한다.
+    날짜는 Office Script 가 날짜로 찾아 다른 칸만 고친다.
 
 경제지표 5개 표(CPI/PPI/PCE/PMI/NFP)는 월간 발표라 수기 유지한다.
 
@@ -111,7 +121,8 @@ CMRC IB Daily News Run - 전일 종가 수집기
 종료 코드
   0  정상
   1  표를 하나도 만들지 못함
-  2  목표일 행을 게시하지 못한 표가 있음 (데이터는 유효하나 아직 불완전)
+  2  목표일 행을 게시하지 못했거나 대기 칸이 남은 표가 있음
+     (데이터는 유효하나 아직 불완전)
 """
 
 from __future__ import annotations
@@ -218,12 +229,13 @@ notes: dict[str, str] = {}      # 컬럼별 실제 사용 소스 기록
 admitted: dict[str, list[str]] = {}   # 이번 실행에 새로 적립된 (표/컬럼) -> 날짜들
 held: dict[str, list[str]] = {}       # 장중이라 보류한 (표/컬럼) -> 날짜들
 calendar_carried: dict[str, list[str]] = {}  # 캘린더 근거로 이월한 (표/컬럼) -> 날짜들
+pending_cells: dict[str, list[str]] = {}     # 값 없이 게시한 대기 칸 (표/컬럼) -> 날짜들
 
 # 구조적으로 죽은 컬럼: {표: {컬럼: 사유}}.
 # 항목 확정 실패처럼 다음 실행에서도 저절로 낫지 않는 것만 넣는다. 이 컬럼은
 # 행을 막지 않고 값 자리에 null 로 나가며, Office Script 가 N/A 로 찍는다.
 # "아직 안 들어온 값"(MISSING)은 여기 넣으면 안 된다 — 그건 기다리면 오므로
-# 행 자체를 보류해야 하고, N/A 를 박아 두면 영구히 굳는다.
+# 대기 칸(pending_columns)으로 비워 두고 다음 실행에서 채운다.
 failed_columns: dict[str, dict[str, str]] = {}
 
 
@@ -275,8 +287,8 @@ def session_final(market: str, d: date) -> datetime:
 # ---------------------------------------------------------------------------
 #
 # 판정은 세 값이다. True=휴장, False=개장, None=모름.
-# "모름"을 휴장으로 치면 안 된다. 틀린 이월값은 시트에 굳지만, 보류는 다음
-# 실행에서 저절로 풀린다. 그래서 애매하면 전부 None 이나 False 쪽으로 보낸다.
+# "모름"을 휴장으로 치면 안 된다. 틀린 이월값은 뉴스런에 그대로 나가지만, 대기는
+# 다음 실행에서 저절로 풀린다. 그래서 애매하면 전부 None 이나 False 쪽으로 보낸다.
 
 _calendars: dict[str, object] = {}
 _warned: set[str] = set()
@@ -325,7 +337,7 @@ def _calendar(code: str):
         _warn_once(
             "xc-import",
             "exchange_calendars 미설치 — 목표일 당일 휴장을 판정할 수 없어 "
-            "해당 행은 다음 거래일 값이 들어올 때까지 보류된다. "
+            "해당 칸은 다음 거래일 값이 들어올 때까지 대기로 남는다. "
             "requirements 에 exchange_calendars 를 추가할 것.",
         )
     except Exception as exc:
@@ -910,7 +922,7 @@ def resolve_cell(points: dict[date, float], d: date,
         return None, EMPTY, None
     # d 이후 값이 아직 없다. 캘린더가 휴장이라고 하면 기다릴 값이 없으므로
     # 직전 거래일 값을 이월한다. 그 직전 거래일 값이 store 에 없으면 더 옛날
-    # 값으로 건너뛰지 않고 보류한다.
+    # 값으로 건너뛰지 않고 미수신으로 둔다.
     if use_calendar and market and market_closed(market, d) is True:
         e = prev_session(market, d)
         if e is not None and e in points:
@@ -924,6 +936,7 @@ def build_rows(table: str, store_table: dict[str, dict[date, float]],
     markets = TABLE_MARKET[table]
     anchor = TABLE_ANCHOR.get(table)
     dead = set(failed_columns.get(table, {}))
+    live = [c for c in TABLE_COLUMNS[table] if c not in dead]
     rows: list[dict] = []
     skipped: list[str] = []
 
@@ -956,31 +969,38 @@ def build_rows(table: str, store_table: dict[str, dict[date, float]],
             if status == CARRIED_CAL:
                 calendar_carried.setdefault(f"{table}/{anchor}", []).append(d.isoformat())
         else:
-            incomplete = False
+            # 복수 시장 표. 미수신 컬럼은 그 칸만 비우고 행은 게시한다.
             by_calendar: list[str] = []
             for col in TABLE_COLUMNS[table]:
                 v, status, _ = resolve_cell(
                     store_table.get(col, {}), d, markets[col], use_calendar
                 )
                 if status == MISSING:
-                    incomplete = True
-                    break
+                    values[col] = None
+                    continue
                 values[col] = round(v, digits[col]) if v is not None else None
                 if status in (CARRIED, CARRIED_CAL):
                     carried_cols.append(col)
                 if status == CARRIED_CAL:
                     by_calendar.append(col)
-            if incomplete:
+            # 살아 있는 컬럼에 값이 하나도 없으면 게시할 것이 없다.
+            if not any(values.get(c) is not None for c in live):
                 skipped.append(d.isoformat())
                 continue
             for col in by_calendar:
                 calendar_carried.setdefault(f"{table}/{col}", []).append(d.isoformat())
+
+        # 대기 칸: 살아 있는 컬럼인데 값이 없는 칸. 다음 실행에서 채워진다.
+        pending_cols = [c for c in live if values.get(c) is None]
+        for col in pending_cols:
+            pending_cells.setdefault(f"{table}/{col}", []).append(d.isoformat())
 
         rows.append({
             "date": d.isoformat(),
             "values": values,
             "carried_forward": bool(carried_cols),
             "carried_columns": carried_cols,
+            "pending_columns": pending_cols,
         })
 
     rows.reverse()  # 시트와 같은 최신순
@@ -1045,13 +1065,24 @@ def main() -> int:
         newest = rows[0]
         flag = ""
         if newest["carried_forward"]:
-            flag = f" (휴장 이월: {', '.join(newest['carried_columns'])})"
+            flag += f" (휴장 이월: {', '.join(newest['carried_columns'])})"
+        if newest["pending_columns"]:
+            flag += f" (대기: {', '.join(newest['pending_columns'])})"
         log(f"  {name}: {len(rows)}행, 최신 {newest['date']}{flag}")
+
+        target_row = next((r for r in rows if r["date"] == target_iso), None)
         if target_iso in skipped:
             incomplete_tables.append(name)
             warnings.append(
                 f"{name}: 목표일 {target_iso} 아직 미수신 — 행 보류. "
                 f"다음 실행에서 채워지면 그때 게시된다."
+            )
+        elif target_row is not None and target_row["pending_columns"]:
+            incomplete_tables.append(name)
+            warnings.append(
+                f"{name}: 목표일 {target_iso} 부분 게시 — 대기 "
+                f"{', '.join(target_row['pending_columns'])}. "
+                f"다음 실행에서 그 칸만 채워진다."
             )
 
     payload = {
@@ -1062,6 +1093,7 @@ def main() -> int:
         "tables": tables,
         "skipped_dates": skipped_all,
         "failed_columns": failed_columns,
+        "pending_cells": pending_cells,
         "admitted_this_run": admitted,
         "held_intraday": held,
         "carried_by_calendar": calendar_carried,
@@ -1084,6 +1116,10 @@ def main() -> int:
         log("캘린더상 휴장이라 직전 거래일 값으로 이월:")
         for k, v in calendar_carried.items():
             log(f"  = {k}: {', '.join(sorted(v))}")
+    if pending_cells:
+        log("대기 칸 (값 없이 게시, 다음 실행에서 채움):")
+        for k, v in pending_cells.items():
+            log(f"  ? {k}: {', '.join(sorted(v))}")
 
     if failed_columns:
         log("죽은 컬럼 (N/A 로 게시):")
@@ -1093,6 +1129,7 @@ def main() -> int:
 
     log(f"=== 완료: 표 {len(tables)}/{len(JOBS)}, "
         f"죽은 컬럼 {sum(len(v) for v in failed_columns.values())}개, "
+        f"대기 칸 {sum(len(v) for v in pending_cells.values())}개, "
         f"오류 {len(errors)}건, 경고 {len(warnings)}건 ===")
     for w in warnings:
         log(f"  ! {w}")
