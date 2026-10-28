@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-28T06:24:48.308920+09:00",
-  "target_date": "2026-10-26",
+  "generated_at": "2026-10-28T09:05:39.021385+09:00",
+  "target_date": "2026-10-27",
   "backfill_business_days": 10,
   "sources": {
     "미국증시/Dow Jones": "Yahoo Finance ^DJI",
@@ -52,6 +52,20 @@
         "VIX"
       ],
       "rows": [
+        {
+          "date": "2026-10-27",
+          "values": {
+            "Dow Jones": 52377.57,
+            "Nasdaq": 26477.81,
+            "S&P 500": 7722.6,
+            "Phili 반도체": 11482.5,
+            "Russell 2000": 2818.87,
+            "VIX": 17.52
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-10-26",
           "values": {
@@ -177,20 +191,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-13",
-          "values": {
-            "Dow Jones": 51670.1,
-            "Nasdaq": 27204.38,
-            "S&P 500": 7805.45,
-            "Phili 반도체": 12208.79,
-            "Russell 2000": 2783.37,
-            "VIX": 15.27
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -205,6 +205,21 @@
         "대만"
       ],
       "rows": [
+        {
+          "date": "2026-10-27",
+          "values": {
+            "유로스톡스50": 6164.69,
+            "영국": 10686.54,
+            "상해종합": 3648.3,
+            "항셍": 23041.32,
+            "홍콩 H": 7766.91,
+            "Nikkei 225": 63268.37,
+            "대만": 46096.23
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-10-26",
           "values": {
@@ -346,21 +361,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-13",
-          "values": {
-            "유로스톡스50": 6167.01,
-            "영국": 10650.3,
-            "상해종합": 3800.86,
-            "항셍": 24345.22,
-            "홍콩 H": 8174.72,
-            "Nikkei 225": 67777.52,
-            "대만": 48341.31
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -373,6 +373,19 @@
         "K밸류업"
       ],
       "rows": [
+        {
+          "date": "2026-10-27",
+          "values": {
+            "KOSPI": 5638.34,
+            "KOSPI 200": 881.07,
+            "KOSDAQ": 743.83,
+            "KOSDAQ 150": 1238.07,
+            "K밸류업": 2631.6
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-10-26",
           "values": {
@@ -489,19 +502,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-13",
-          "values": {
-            "KOSPI": 6035.35,
-            "KOSPI 200": 942.07,
-            "KOSDAQ": 837.03,
-            "KOSDAQ 150": 1432.43,
-            "K밸류업": 2843.83
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -514,6 +514,19 @@
         "CP91"
       ],
       "rows": [
+        {
+          "date": "2026-10-27",
+          "values": {
+            "KR 2Y": 3.716,
+            "KR 3Y": 3.758,
+            "KR 10Y": 4.032,
+            "SB 3Y(AA-)": 4.447,
+            "CP91": 3.79
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-10-26",
           "values": {
@@ -630,19 +643,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-13",
-          "values": {
-            "KR 2Y": 3.811,
-            "KR 3Y": 3.857,
-            "KR 10Y": 4.229,
-            "SB 3Y(AA-)": 4.556,
-            "CP91": 3.63
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -654,6 +654,18 @@
         "US 30Y"
       ],
       "rows": [
+        {
+          "date": "2026-10-27",
+          "values": {
+            "US 2Y": 4.7,
+            "US 5Y": 4.82,
+            "US 10Y": 4.99,
+            "US 30Y": 5.3
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-10-26",
           "values": {
@@ -761,18 +773,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-13",
-          "values": {
-            "US 2Y": 4.79,
-            "US 5Y": 5.0,
-            "US 10Y": 5.21,
-            "US 30Y": 5.56
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -785,6 +785,19 @@
         "달러/엔"
       ],
       "rows": [
+        {
+          "date": "2026-10-27",
+          "values": {
+            "달러/원": 1324.77,
+            "유로/원": 1478.76,
+            "엔/원": 8.4092,
+            "유로/달러": 1.1174,
+            "달러/엔": 157.53
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-10-26",
           "values": {
@@ -901,19 +914,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-13",
-          "values": {
-            "달러/원": 1334.13,
-            "유로/원": 1488.11,
-            "엔/원": 8.4141,
-            "유로/달러": 1.116,
-            "달러/엔": 158.52
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -926,6 +926,19 @@
         "구리"
       ],
       "rows": [
+        {
+          "date": "2026-10-27",
+          "values": {
+            "WTI": 100.09,
+            "Brent": 109.55,
+            "천연가스": 3.059,
+            "Gold": 4075.5,
+            "구리": 6.661
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-10-26",
           "values": {
@@ -1042,19 +1055,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-13",
-          "values": {
-            "WTI": 94.14,
-            "Brent": 105.69,
-            "천연가스": 3.283,
-            "Gold": 4177.3,
-            "구리": 6.678
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     }
@@ -1063,62 +1063,6 @@
   "failed_columns": {},
   "pending_cells": {},
   "admitted_this_run": {
-    "미국증시/Dow Jones": [
-      "2026-10-27"
-    ],
-    "미국증시/Nasdaq": [
-      "2026-10-27"
-    ],
-    "미국증시/S&P 500": [
-      "2026-10-27"
-    ],
-    "미국증시/Phili 반도체": [
-      "2026-10-27"
-    ],
-    "미국증시/Russell 2000": [
-      "2026-10-27"
-    ],
-    "미국증시/VIX": [
-      "2026-10-27"
-    ],
-    "해외주요국증시/유로스톡스50": [
-      "2026-10-27"
-    ],
-    "해외주요국증시/영국": [
-      "2026-10-27"
-    ],
-    "환율/달러/원": [
-      "2026-10-27"
-    ],
-    "환율/유로/원": [
-      "2026-10-27"
-    ],
-    "환율/엔/원": [
-      "2026-10-27"
-    ],
-    "환율/유로/달러": [
-      "2026-10-27"
-    ],
-    "환율/달러/엔": [
-      "2026-10-27"
-    ],
-    "원자재/WTI": [
-      "2026-10-27"
-    ],
-    "원자재/Brent": [
-      "2026-10-27"
-    ],
-    "원자재/천연가스": [
-      "2026-10-27"
-    ],
-    "원자재/Gold": [
-      "2026-10-27"
-    ],
-    "원자재/구리": [
-      "2026-10-27"
-    ]
-  },
-  "held_intraday": {
     "미국채/US 2Y": [
       "2026-10-27"
     ],
@@ -1130,6 +1074,23 @@
     ],
     "미국채/US 30Y": [
       "2026-10-27"
+    ]
+  },
+  "held_intraday": {
+    "환율/달러/원": [
+      "2026-10-28"
+    ],
+    "환율/유로/원": [
+      "2026-10-28"
+    ],
+    "환율/엔/원": [
+      "2026-10-28"
+    ],
+    "환율/유로/달러": [
+      "2026-10-28"
+    ],
+    "환율/달러/엔": [
+      "2026-10-28"
     ]
   },
   "carried_by_calendar": {},
