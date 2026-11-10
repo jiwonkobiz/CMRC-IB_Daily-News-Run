@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-10T04:00:00.525510+09:00",
-  "target_date": "2026-11-06",
+  "generated_at": "2026-11-10T09:13:12.548799+09:00",
+  "target_date": "2026-11-09",
   "backfill_business_days": 10,
   "sources": {
     "미국증시/Dow Jones": "Yahoo Finance ^DJI",
@@ -52,6 +52,20 @@
         "VIX"
       ],
       "rows": [
+        {
+          "date": "2026-11-09",
+          "values": {
+            "Dow Jones": 52389.75,
+            "Nasdaq": 25253.14,
+            "S&P 500": 7549.94,
+            "Phili 반도체": 10033.93,
+            "Russell 2000": 2840.81,
+            "VIX": 19.92
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-11-06",
           "values": {
@@ -177,20 +191,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-26",
-          "values": {
-            "Dow Jones": 52361.58,
-            "Nasdaq": 26169.38,
-            "S&P 500": 7676.77,
-            "Phili 반도체": 11083.47,
-            "Russell 2000": 2786.42,
-            "VIX": 18.39
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -205,6 +205,27 @@
         "대만"
       ],
       "rows": [
+        {
+          "date": "2026-11-09",
+          "values": {
+            "유로스톡스50": 6290.45,
+            "영국": 10782.87,
+            "상해종합": null,
+            "항셍": null,
+            "홍콩 H": null,
+            "Nikkei 225": null,
+            "대만": null
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": [
+            "상해종합",
+            "항셍",
+            "홍콩 H",
+            "Nikkei 225",
+            "대만"
+          ]
+        },
         {
           "date": "2026-11-06",
           "values": {
@@ -341,23 +362,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-26",
-          "values": {
-            "유로스톡스50": 6116.23,
-            "영국": 10767.3,
-            "상해종합": 3697.52,
-            "항셍": 23211.81,
-            "홍콩 H": 7802.09,
-            "Nikkei 225": 62189.65,
-            "대만": 46041.43
-          },
-          "carried_forward": true,
-          "carried_columns": [
-            "대만"
-          ],
-          "pending_columns": []
         }
       ]
     },
@@ -370,6 +374,19 @@
         "K밸류업"
       ],
       "rows": [
+        {
+          "date": "2026-11-09",
+          "values": {
+            "KOSPI": 5018.85,
+            "KOSPI 200": 778.35,
+            "KOSDAQ": 638.97,
+            "KOSDAQ 150": 1034.72,
+            "K밸류업": 2413.79
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-11-06",
           "values": {
@@ -486,19 +503,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-26",
-          "values": {
-            "KOSPI": 5469.47,
-            "KOSPI 200": 851.51,
-            "KOSDAQ": 727.21,
-            "KOSDAQ 150": 1210.01,
-            "K밸류업": 2562.38
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -511,6 +515,19 @@
         "CP91"
       ],
       "rows": [
+        {
+          "date": "2026-11-09",
+          "values": {
+            "KR 2Y": 3.629,
+            "KR 3Y": 3.639,
+            "KR 10Y": 3.863,
+            "SB 3Y(AA-)": 4.332,
+            "CP91": 3.87
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-11-06",
           "values": {
@@ -627,19 +644,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-26",
-          "values": {
-            "KR 2Y": 3.739,
-            "KR 3Y": 3.789,
-            "KR 10Y": 4.074,
-            "SB 3Y(AA-)": 4.476,
-            "CP91": 3.78
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -651,6 +655,18 @@
         "US 30Y"
       ],
       "rows": [
+        {
+          "date": "2026-11-09",
+          "values": {
+            "US 2Y": 4.56,
+            "US 5Y": 4.67,
+            "US 10Y": 4.88,
+            "US 30Y": 5.26
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-11-06",
           "values": {
@@ -758,18 +774,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-26",
-          "values": {
-            "US 2Y": 4.68,
-            "US 5Y": 4.84,
-            "US 10Y": 5.0,
-            "US 30Y": 5.31
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -782,6 +786,19 @@
         "달러/엔"
       ],
       "rows": [
+        {
+          "date": "2026-11-09",
+          "values": {
+            "달러/원": 1362.7,
+            "유로/원": 1518.11,
+            "엔/원": 8.6034,
+            "유로/달러": 1.1147,
+            "달러/엔": 158.29
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-11-06",
           "values": {
@@ -898,19 +915,6 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-26",
-          "values": {
-            "달러/원": 1321.76,
-            "유로/원": 1475.7,
-            "엔/원": 8.4276,
-            "유로/달러": 1.1218,
-            "달러/엔": 156.83
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     },
@@ -923,6 +927,19 @@
         "구리"
       ],
       "rows": [
+        {
+          "date": "2026-11-09",
+          "values": {
+            "WTI": 86.42,
+            "Brent": 92.32,
+            "천연가스": 3.204,
+            "Gold": 4144.9,
+            "구리": 6.376
+          },
+          "carried_forward": false,
+          "carried_columns": [],
+          "pending_columns": []
+        },
         {
           "date": "2026-11-06",
           "values": {
@@ -1039,65 +1056,30 @@
           "carried_forward": false,
           "carried_columns": [],
           "pending_columns": []
-        },
-        {
-          "date": "2026-10-26",
-          "values": {
-            "WTI": 101.76,
-            "Brent": 115.81,
-            "천연가스": 2.602,
-            "Gold": 4038.4,
-            "구리": 6.508
-          },
-          "carried_forward": false,
-          "carried_columns": [],
-          "pending_columns": []
         }
       ]
     }
   },
   "skipped_dates": {},
   "failed_columns": {},
-  "pending_cells": {},
-  "admitted_this_run": {
-    "해외주요국증시/유로스톡스50": [
+  "pending_cells": {
+    "해외주요국증시/상해종합": [
       "2026-11-09"
     ],
-    "해외주요국증시/영국": [
+    "해외주요국증시/항셍": [
       "2026-11-09"
     ],
-    "국내증시/KOSPI": [
+    "해외주요국증시/홍콩 H": [
       "2026-11-09"
     ],
-    "국내증시/KOSPI 200": [
+    "해외주요국증시/Nikkei 225": [
       "2026-11-09"
     ],
-    "국내증시/KOSDAQ": [
-      "2026-11-09"
-    ],
-    "국내증시/KOSDAQ 150": [
-      "2026-11-09"
-    ],
-    "국내증시/K밸류업": [
-      "2026-11-09"
-    ],
-    "국내채권/KR 2Y": [
-      "2026-11-09"
-    ],
-    "국내채권/KR 3Y": [
-      "2026-11-09"
-    ],
-    "국내채권/KR 10Y": [
-      "2026-11-09"
-    ],
-    "국내채권/SB 3Y(AA-)": [
-      "2026-11-09"
-    ],
-    "국내채권/CP91": [
+    "해외주요국증시/대만": [
       "2026-11-09"
     ]
   },
-  "held_intraday": {
+  "admitted_this_run": {
     "미국증시/Dow Jones": [
       "2026-11-09"
     ],
@@ -1114,6 +1096,18 @@
       "2026-11-09"
     ],
     "미국증시/VIX": [
+      "2026-11-09"
+    ],
+    "미국채/US 2Y": [
+      "2026-11-09"
+    ],
+    "미국채/US 5Y": [
+      "2026-11-09"
+    ],
+    "미국채/US 10Y": [
+      "2026-11-09"
+    ],
+    "미국채/US 30Y": [
       "2026-11-09"
     ],
     "환율/달러/원": [
@@ -1147,7 +1141,26 @@
       "2026-11-09"
     ]
   },
+  "held_intraday": {
+    "환율/달러/원": [
+      "2026-11-10"
+    ],
+    "환율/유로/원": [
+      "2026-11-10"
+    ],
+    "환율/엔/원": [
+      "2026-11-10"
+    ],
+    "환율/유로/달러": [
+      "2026-11-10"
+    ],
+    "환율/달러/엔": [
+      "2026-11-10"
+    ]
+  },
   "carried_by_calendar": {},
-  "warnings": [],
+  "warnings": [
+    "해외주요국증시: 목표일 2026-11-09 부분 게시 — 대기 상해종합, 항셍, 홍콩 H, Nikkei 225, 대만. 다음 실행에서 그 칸만 채워진다."
+  ],
   "errors": []
 }
