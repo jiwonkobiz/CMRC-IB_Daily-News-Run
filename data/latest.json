@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-13T12:19:42.145673+09:00",
+  "generated_at": "2026-11-13T12:30:17.187964+09:00",
   "target_date": "2026-11-12",
   "backfill_business_days": 10,
   "sources": {
@@ -21,6 +21,11 @@
     "국내증시/KOSDAQ": "KRX 코스닥 (2001)",
     "국내증시/KOSDAQ 150": "KRX 코스닥 150 (2203)",
     "국내증시/K밸류업": "KRX 코리아 밸류업 지수 (5302)",
+    "국내채권/KR 2Y": "ECOS 817Y002 국고채(2년)",
+    "국내채권/KR 3Y": "ECOS 817Y002 국고채(3년)",
+    "국내채권/KR 10Y": "ECOS 817Y002 국고채(10년)",
+    "국내채권/SB 3Y(AA-)": "ECOS 817Y002 회사채(3년, AA-)",
+    "국내채권/CP91": "ECOS 817Y002 CP(91일)",
     "미국채/US 2Y": "U.S. Treasury daily yield curve CSV",
     "미국채/US 5Y": "U.S. Treasury daily yield curve CSV",
     "미국채/US 10Y": "U.S. Treasury daily yield curve CSV",
@@ -924,11 +929,11 @@
         {
           "date": "2026-11-12",
           "values": {
-            "WTI": 88.26,
-            "Brent": 95.49,
-            "천연가스": 3.344,
-            "Gold": 3922.0,
-            "구리": 6.2035
+            "WTI": 88.16,
+            "Brent": 95.47,
+            "천연가스": 3.345,
+            "Gold": 3919.1,
+            "구리": 6.2095
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -1057,23 +1062,7 @@
   "skipped_dates": {},
   "failed_columns": {},
   "pending_cells": {},
-  "admitted_this_run": {
-    "해외주요국증시/상해종합": [
-      "2026-11-12"
-    ],
-    "해외주요국증시/항셍": [
-      "2026-11-12"
-    ],
-    "해외주요국증시/홍콩 H": [
-      "2026-11-12"
-    ],
-    "해외주요국증시/Nikkei 225": [
-      "2026-11-12"
-    ],
-    "해외주요국증시/대만": [
-      "2026-11-12"
-    ]
-  },
+  "admitted_this_run": {},
   "held_intraday": {
     "해외주요국증시/상해종합": [
       "2026-11-13"
@@ -1123,7 +1112,5 @@
   },
   "carried_by_calendar": {},
   "warnings": [],
-  "errors": [
-    "국내채권: ConnectTimeout: HTTPSConnectionPool(host='ecos.bok.or.kr', port=443): Max retries exceeded with url: /api/StatisticItemList/0WU63YLA0KN7OB3XAKTV/json/kr/1/500/817Y002 (Caused by ConnectTimeoutError(<HTTPSConnection(host='ecos.bok.or.kr', port=443) at 0x761879b3b590>, 'Connection to ecos.bok.or.kr timed out. (connect timeout=30)'))"
-  ]
+  "errors": []
 }
