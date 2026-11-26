@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T14:17:18.172200+09:00",
+  "generated_at": "2026-11-27T03:33:22.773205+09:00",
   "target_date": "2026-11-25",
   "backfill_business_days": 10,
   "sources": {
@@ -60,7 +60,7 @@
             "S&P 500": 7182.78,
             "Phili 반도체": 8774.86,
             "Russell 2000": 2704.06,
-            "VIX": 28.29
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -74,7 +74,7 @@
             "S&P 500": 7201.09,
             "Phili 반도체": 8832.5,
             "Russell 2000": 2684.94,
-            "VIX": 26.36
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -88,7 +88,7 @@
             "S&P 500": 7237.17,
             "Phili 반도체": 9588.05,
             "Russell 2000": 2669.66,
-            "VIX": 26.62
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -102,7 +102,7 @@
             "S&P 500": 6910.39,
             "Phili 반도체": 8408.59,
             "Russell 2000": 2581.79,
-            "VIX": 35.89
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -116,7 +116,7 @@
             "S&P 500": 7175.83,
             "Phili 반도체": 9419.72,
             "Russell 2000": 2655.11,
-            "VIX": 28.44
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -130,7 +130,7 @@
             "S&P 500": 7323.63,
             "Phili 반도체": 9652.8,
             "Russell 2000": 2714.31,
-            "VIX": 24.56
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -144,7 +144,7 @@
             "S&P 500": 7340.53,
             "Phili 반도체": 9642.88,
             "Russell 2000": 2701.87,
-            "VIX": 25.46
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -158,7 +158,7 @@
             "S&P 500": 7416.59,
             "Phili 반도체": 9610.65,
             "Russell 2000": 2742.94,
-            "VIX": 22.91
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -172,7 +172,7 @@
             "S&P 500": 7561.67,
             "Phili 반도체": 10146.32,
             "Russell 2000": 2790.49,
-            "VIX": 19.3
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -186,7 +186,7 @@
             "S&P 500": 7592.4,
             "Phili 반도체": 10506.67,
             "Russell 2000": 2799.06,
-            "VIX": 18.7
+            "VIX": null
           },
           "carried_forward": false,
           "carried_columns": [],
@@ -1055,39 +1055,17 @@
     }
   },
   "skipped_dates": {},
-  "failed_columns": {},
+  "failed_columns": {
+    "미국증시": {
+      "VIX": "최근 40일 데이터 없음 (^VIX)"
+    }
+  },
   "pending_cells": {},
   "admitted_this_run": {
-    "해외주요국증시/상해종합": [
-      "2026-11-25"
-    ],
-    "해외주요국증시/항셍": [
-      "2026-11-25"
-    ],
-    "해외주요국증시/홍콩 H": [
-      "2026-11-25"
-    ],
-    "해외주요국증시/Nikkei 225": [
-      "2026-11-25"
-    ],
-    "해외주요국증시/대만": [
-      "2026-11-25"
-    ]
-  },
-  "held_intraday": {
-    "해외주요국증시/상해종합": [
+    "해외주요국증시/유로스톡스50": [
       "2026-11-26"
     ],
-    "해외주요국증시/항셍": [
-      "2026-11-26"
-    ],
-    "해외주요국증시/홍콩 H": [
-      "2026-11-26"
-    ],
-    "해외주요국증시/Nikkei 225": [
-      "2026-11-26"
-    ],
-    "해외주요국증시/대만": [
+    "해외주요국증시/영국": [
       "2026-11-26"
     ],
     "국내증시/KOSPI": [
@@ -1105,6 +1083,23 @@
     "국내증시/K밸류업": [
       "2026-11-26"
     ],
+    "국내채권/KR 2Y": [
+      "2026-11-26"
+    ],
+    "국내채권/KR 3Y": [
+      "2026-11-26"
+    ],
+    "국내채권/KR 10Y": [
+      "2026-11-26"
+    ],
+    "국내채권/SB 3Y(AA-)": [
+      "2026-11-26"
+    ],
+    "국내채권/CP91": [
+      "2026-11-26"
+    ]
+  },
+  "held_intraday": {
     "환율/달러/원": [
       "2026-11-26"
     ],
@@ -1138,5 +1133,7 @@
   },
   "carried_by_calendar": {},
   "warnings": [],
-  "errors": []
+  "errors": [
+    "미국증시/VIX: 최근 40일 데이터 없음 (^VIX)"
+  ]
 }
